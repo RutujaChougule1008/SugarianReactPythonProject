@@ -1,0 +1,17 @@
+/* styles.css */
+.button {
+    margin-right: 10px;
+    margin-bottom: 5px;
+    margin-top: 60px; 
+  }
+  
+  /* Define hover effect */
+  .button:hover {
+    background-color: black;
+    border-color: #007bff; 
+    color: white; 
+  }
+
+
+  
+  

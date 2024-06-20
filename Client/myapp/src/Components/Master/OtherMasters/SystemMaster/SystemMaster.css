@@ -1,0 +1,85 @@
+/* CreateAccountYear.css */
+.form-container-SystemMaster {
+    max-width: 80%;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.form-group-systemMaster {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.form-group label {
+    flex: 0 0 100px;
+    margin-bottom: 0;
+}
+
+.form-group-systemMaster input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.custom-select {
+    display: block;
+    width: 30%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Style for select box label */
+.select-label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.created-by-container {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-top: 5px;
+    max-width: 250px;
+    width: 80%;
+}
+
+.created-by-heading {
+    font-size: 12px;
+    color: #333333;
+    margin: 0;
+    font-weight: bold;
+    padding: 0;
+    letter-spacing: 1px;
+
+}
+
+.modified-by-container {
+    background-color: #ffffff;
+    padding: 20px;
+    float: right;
+    max-width: 250px;
+    width: 80%;
+    margin-top: -60px;
+}
+
+.modified-by-heading {
+    font-size: 12px;
+    font-weight: bold;
+    color: #333333;
+    margin: 0;
+    letter-spacing: 1px;
+
+}

@@ -1,0 +1,124 @@
+.navbar {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* Maintain a consistent 12-column layout for large screens */
+  background-color: black;
+  text-align: center;
+  gap: 5px; /* Sufficient gap for all items */
+}
+
+.nav-item {
+  background-color: #080808;
+  color: white;
+  padding: -5px; /* Slightly larger padding for better readability */
+  cursor: pointer;
+  position: relative; /* Essential for submenu positioning */
+}
+
+.submenu, .submenu1 {
+  position: absolute;
+  background-color: black;
+  display: block;
+  padding: 0px;
+  left: 0;
+  top: 100%;
+  width: 150%; /* Ensures submenu matches the width of its parent */
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.submenu-item, .submenu-item1 {
+  padding: 0px;
+  color: white;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid #444; /* Visible against the black background */
+}
+
+.submenu1 {
+  position: absolute;
+  background-color: black;
+  display: block;
+  padding: 10px;
+  left: 105%; /* Positions the submenu relative to its parent */
+  top: 0; /* Aligns top with the first submenu */
+  width: 100%; /* Matches width with parent */
+}
+
+.submenu-item a , .submenu-item1 a{
+  color: white;
+  display: block;
+  padding: 5px;
+  text-decoration: none; /* Ensures links are not underlined */
+  top: 100%;
+  width: 100%;
+}
+
+.submenu-item1 a {
+  color: white;
+  display: block;
+  padding: 5px;
+  text-decoration: none; /* Ensures links are not underlined */
+}
+
+.submenu-item:last-child {
+  border-bottom: none;
+}
+
+.submenu-item:hover {
+  background-color: #777; /* Darker background for hover on individual submenu items */
+}
+
+.submenu-item a:hover {
+  background-color: #777; /* Ensures the link in a submenu item also gets the hover effect */
+}
+
+/* These are to ensure the entire submenus' background changes */
+
+.submenu-item a {
+  color: white;
+  display: block;
+  padding: 5px;
+  text-decoration: none; /* Ensures links are not underlined */
+}
+
+
+.nav-item:hover > .submenu,
+.submenu-item:hover > .submenu1 {
+  display: block; /* Ensures submenus are displayed on hover */
+}
+
+.submenu-item1:hover{
+  background-color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    grid-template-columns: repeat(3, 1fr); /* Simpler grid for smaller screens */
+  }
+
+  .nav-item, .submenu, .submenu1 {
+    width: 100%; /* Full width for easier navigation */
+  }
+
+  .submenu1 {
+    position: static; /* Avoids positioning issues on smaller screens */
+    width: auto;
+    padding: 5px;
+  }
+
+  .submenu, .submenu1 {
+    display: block; /* Always display submenus on small devices */
+    padding-left: 20px; /* Clear indentation for submenus */
+  }
+}
+
+@media (min-width: 1200px) {
+  .navbar {
+    grid-template-columns: repeat(12, 1fr); /* Optimal use of space on large screens */
+    gap: 15px; /* Adequate spacing between items */
+  }
+
+  .nav-item {
+    padding: 10px 15px; /* Enhanced padding for larger displays */
+  }
+}

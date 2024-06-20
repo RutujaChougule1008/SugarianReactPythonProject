@@ -1,0 +1,162 @@
+.debitCreditNote-container {
+    max-width: 100%;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+.debitCreditNote-col-Text{
+    flex: 0 0 auto;
+    padding: 0px;
+    margin-left: 10px;
+    width: 130px;
+}
+
+.debitCreditNote-col-Ewaybillno{
+    flex: 0 0 auto;
+    padding: 0px;
+    margin-left: 10px;
+    width: 200px;
+}
+
+.debitCreditNote-form-group-type{
+    flex: 0 0 auto;
+    padding: 0px;
+    margin-left: 10px;
+    width: 250px;
+}
+
+
+.debitCreditNote-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.debitCreditNote-col {
+    flex: 0 0 auto;
+    padding: 0px;
+    margin-left: 10px;
+}
+
+.debitCreditNote-form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.debitCreditNote-form-label {
+    margin-bottom: .5rem;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.debitCreditNote-custom-select, .debitCreditNote-form-control {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.debitCreditNote-form-control[disabled], .debitCreditNote-form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+ 
+  }
+
+
+
+  /* styles.css */
+
+.modal-body {
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background for better readability */
+    border-radius: 8px;
+  }
+  
+  .modal-body form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-body label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 15px; /* Space between the previous input and the next label */
+  }
+  
+  .modal-body .form-element {
+    margin-bottom: 15px;
+  }
+  
+  .account-master-help {
+    margin-top: 5px;
+  }
+  
+
+
+  /* cgst css */
+
+
+  .debitCreditNote-CGST-row {
+    display: flex;
+    align-items: center;
+}
+
+.debitCreditNote-CGST-form-label {
+    margin-right: 10px; /* Adjust as necessary for spacing */
+}
+
+.debitCreditNote-CGST-col-Text {
+    display: flex;
+    flex: 1;
+    gap: 10px; /* Add space between the input fields if needed */
+}
+
+.debitCreditNote-CGST-form-group {
+    display: flex;
+    flex: 1;
+}
+
+.debitCreditNote-CGST-form-control {
+    width: 100%; /* Ensures input fields take full width within the group */
+}
+
+
+
+/* LoadingOverlay.css */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it's on top of other content */
+}
+
+.spinner-container {
+  text-align: center;
+}
+
+
+  

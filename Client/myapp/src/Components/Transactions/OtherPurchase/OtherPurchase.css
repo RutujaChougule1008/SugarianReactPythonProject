@@ -1,0 +1,48 @@
+/* OtherPurchase.css */
+
+.form-container-New {
+    max-width: 80%; /* Adjust the maximum width as needed */
+    margin: 0 auto; /* Center the form horizontally */
+    padding: 20px; /* Add some padding around the form */
+    background-color: #f8f9fa; /* Light background color */
+    border: 1px solid #ddd; /* Add a border */
+    border-radius: 5px; /* Add border radius for rounded corners */
+}
+
+.form-group-otherPurchase input[type="text"] {
+    width: 15%; 
+  
+}
+
+/* OtherPurchase.css */
+.form-group-row {
+    display: flex;
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+
+.form-group-row label {
+    margin-right: 10px; 
+}
+
+.form-group-row .form-group-item {
+    flex: 1; 
+    margin-left: 30px;
+}
+
+.form-group-row input[type="text"],
+.form-group-row select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc; 
+    border-radius: 3px; 
+    box-sizing: border-box; 
+}
+
+/* Add more styles as needed */
+
+
+.error {
+    color: red;
+  }
+  

@@ -1,0 +1,34 @@
+.companyListContainer {
+    margin: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .companyList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 50%;
+    max-width: 400px;
+    align-items: center;
+  }
+  
+  .companyItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  .companyItem span{
+    font-weight: bold;
+    color: #3F7C13;
+  }
+
+  .required-star{
+    color: red;
+  }
