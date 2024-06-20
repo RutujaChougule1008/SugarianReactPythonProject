@@ -14,7 +14,7 @@ const GSTRateMasterHelp = ({ onAcCodeClick, name, GstRateName,GstRateCode,disabl
     const [popupContent, setPopupContent] = useState([]);
     const [enteredAcCode, setEnteredAcCode] = useState("");
     const [enteredAcName, setEnteredAcName] = useState("");
-    const [enteredAccoid, setEnteredAccoid] = useState("");
+    const [gstRate, setGstRate] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -51,7 +51,7 @@ const GSTRateMasterHelp = ({ onAcCodeClick, name, GstRateName,GstRateCode,disabl
     }, [apiDataFetched]);
 
     // Handle Mill Code button click
-    const handleMillCodeButtonClick = (acData) => {
+    const handleMillCodeButtonClick = () => {
         lActiveInputFeild = name;
         fetchAndOpenPopup();
         if (onAcCodeClick) {
@@ -80,15 +80,16 @@ const GSTRateMasterHelp = ({ onAcCodeClick, name, GstRateName,GstRateCode,disabl
             const matchingItem = data.find((item) => item.Doc_no === parseInt(value, 10));
 
             if (matchingItem) {
+              
+                setGstRate(matchingItem.Rate);
                 setEnteredAcName(matchingItem.GST_Name);
-                setEnteredAccoid(matchingItem.accoid);
 
                 if (onAcCodeClick) {
-                    onAcCodeClick(matchingItem.Doc_no, matchingItem.GST_Name, value);
+                    onAcCodeClick(matchingItem.Doc_no, matchingItem.Rate,matchingItem.GST_Name, value);
                 }
             } else {
                 setEnteredAcName("");
-                setEnteredAccoid("");
+                setGstRate("");
             }
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -99,10 +100,11 @@ const GSTRateMasterHelp = ({ onAcCodeClick, name, GstRateName,GstRateCode,disabl
     const handleRecordDoubleClick = (item) => {
         if (lActiveInputFeild === name) {
             setEnteredAcCode(item.Doc_no);
+            setGstRate(item.Rate);
             setEnteredAcName(item.GST_Name);
 
             if (onAcCodeClick) {
-                onAcCodeClick(item.Doc_no, enteredAcName, enteredAcCode);
+                onAcCodeClick(item.Doc_no,item.Rate, enteredAcName, enteredAcCode);
             }
         }
 

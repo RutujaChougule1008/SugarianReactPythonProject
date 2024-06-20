@@ -68,9 +68,12 @@ var ItemCodeNew = ""
 var BrandName = ""
 var BrandCode = ""
 var subTotal = 0.00
+var globalQuantalTotal = 0
+var CGSTRate = 0.00 
+var SGSTRate= 0.00
+var IGSTRate = 0.00
 
 var selectedfilter = ""
-
 const API_URL = process.env.REACT_APP_API;
 const companyCode = sessionStorage.getItem("Company_Code");
 const Year_Code = sessionStorage.getItem("Year_Code");
@@ -117,8 +120,6 @@ const SugarPurchase = () => {
     const selectedRecord = location.state?.selectedRecord;
     const navigate = useNavigate();
     const setFocusTaskdate = useRef(null);
-    selectedfilter = location.state?.selectedfilter;
-    const [tranType, setTranType] = useState(selectedfilter)
     const [isHandleChange, setIsHandleChange] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -184,6 +185,7 @@ const SugarPurchase = () => {
     const [mill, setMill] = useState("");
     const [broker, setBroker] = useState("");
     const [gstCode, setGstCode] = useState("");
+    const [gstRate, setGstRate] = useState("");
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -195,14 +197,7 @@ const SugarPurchase = () => {
             [name]: value
 
         }));
-        // if (name === "tran_type") {
-        //     console.log("Selected tran_type:", value);
-        //     setTranType(value);
-        //     setIsHandleChange(true);
 
-        // } else {
-
-        // }
     };
 
     useEffect(() => {
@@ -211,7 +206,7 @@ const SugarPurchase = () => {
             setIsHandleChange(false);
         }
         setFocusTaskdate.current.focus();
-    }, [tranType]);
+    }, []);
 
     //Validation Part
     const validateField = (name, value) => {
@@ -276,7 +271,6 @@ const SugarPurchase = () => {
         setIsEditing(true);
         fetchLastRecord()
         setFormData(initialFormData)
-        setTranType()
         FromName = ""
         FromCode = ""
         Unitname = ""
@@ -291,6 +285,8 @@ const SugarPurchase = () => {
         ItemCodeNew = ""
         BrandName = ""
         BrandCode = ""
+        subTotal = ""
+        globalQuantalTotal = ""
         setLastTenderDetails([])
     };
 
@@ -314,7 +310,8 @@ const SugarPurchase = () => {
 
         const headData = {
             ...formData,
-            subTotal: subTotal
+            subTotal: subTotal,
+            NETQNTL: globalQuantalTotal
         };
 
         // Remove dcid from headData if in edit mode
@@ -339,17 +336,14 @@ const SugarPurchase = () => {
             Branch_Code: 1,
             detail_id: 1
         }));
-
         const requestData = {
             headData,
             detailData,
         };
-
         try {
             if (isEditMode) {
                 const updateApiUrl = `${API_URL}/update-SugarPurchase?purchaseid=${purchaseidNew}`;
                 const response = await axios.put(updateApiUrl, requestData);
-
                 toast.success('Data updated successfully!');
                 setTimeout(() => {
                     window.location.reload();
@@ -369,11 +363,9 @@ const SugarPurchase = () => {
                 setSaveButtonEnabled(false);
                 setCancelButtonEnabled(false);
                 setIsEditing(true);
-
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000)
-
             }
         } catch (error) {
             console.error("Error during API call:", error);
@@ -460,7 +452,10 @@ const SugarPurchase = () => {
                 BrandName = data.last_SugarPurchasedetail[0].Brand_Name
                 BrandCode = data.last_SugarPurchasedetail[0].Branch_Code
                 subTotal = data.last_SugarPurchasehead.subTotal
-
+                globalQuantalTotal = data.last_SugarPurchasehead.NETQNTL
+                CGSTRate = data.last_SugarPurchasehead.CGSTRate
+                SGSTRate = data.last_SugarPurchasehead.SGSTRate
+                IGSTRate  = data.last_SugarPurchasehead.IGSTRate
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
@@ -506,7 +501,8 @@ const SugarPurchase = () => {
                 ItemCodeNew = data.first_SugarPurchaseHead_data.item_code
                 BrandName = data.first_SugarPurchasedetail_data[0].Brand_Name
                 BrandCode = data.first_SugarPurchaseHead_data.Branch_Code
-
+                subTotal = data.first_SugarPurchaseHead_data.subTotal
+                globalQuantalTotal = data.first_SugarPurchaseHead_data.NETQNTL
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
@@ -525,7 +521,7 @@ const SugarPurchase = () => {
     // Function to fetch the last record
     const handleLastButtonClick = async () => {
         try {
-            const response = await axios.get(`${API_URL}/getlastSugarPurchase-record-navigation?Company_Code=${companyCode}&Year_Code=${Year_Code}&tran_type=${tranType}`);
+            const response = await axios.get(`${API_URL}/getlastSugarPurchase-record-navigation?Company_Code=${companyCode}&Year_Code=${Year_Code}`);
             if (response.status === 200) {
                 const data = response.data;
                 purchaseidNew = data.last_SugarPurchaseHead_data.purchaseid
@@ -543,6 +539,8 @@ const SugarPurchase = () => {
                 ItemCodeNew = data.last_SugarPurchaseHead_data.item_code
                 BrandName = data.last_SugarPurchasedetail_data[0].Brand_Name
                 BrandCode = data.last_SugarPurchaseHead_data.Branch_Code
+                subTotal = data.last_SugarPurchaseHead_data.subTotal
+                globalQuantalTotal = data.last_SugarPurchaseHead_data.NETQNTL
 
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
@@ -581,6 +579,8 @@ const SugarPurchase = () => {
                 ItemCodeNew = data.next_SugarPurchasehead_data.item_code
                 BrandName = data.next_SugarPurchasedetails_data[0].Brand_Name
                 BrandCode = data.next_SugarPurchasehead_data.Branch_Code
+                subTotal = data.next_SugarPurchasehead_data.subTotal
+                globalQuantalTotal = data.next_SugarPurchasehead_data.NETQNTL
 
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
@@ -620,6 +620,8 @@ const SugarPurchase = () => {
                 ItemCodeNew = data.previous_SugarPurchaseHead_data.item_code
                 BrandName = data.previous_SugarPurchasedetail_data[0].Brand_Name
                 BrandCode = data.previous_SugarPurchaseHead_data.Branch_Code
+                subTotal = data.previous_SugarPurchaseHead_data.subTotal
+                globalQuantalTotal = data.previous_SugarPurchaseHead_data.NETQNTL
 
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
@@ -661,34 +663,35 @@ const SugarPurchase = () => {
         setCancelButtonEnabled(false);
         setCancelButtonClicked(true);
         try {
-            const response = await axios.get(`${API_URL}/getdebitcreditByid?doc_no=${selectedRecord.doc_no}&Company_Code=${companyCode}&Year_Code=${Year_Code}&tran_type=${selectedRecord.tran_type}`);
+            const response = await axios.get(`${API_URL}/getsugarpurchasebyid?doc_no=${selectedRecord.doc_no}&Company_Code=${companyCode}&Year_Code=${Year_Code}`);
             if (response.status === 200) {
                 const data = response.data;
-                purchaseidNew = data.first_SugarPurchaseHead_data.purchaseid
-                FromName = data.first_SugarPurchasedetail_data[0].FromName
-                FromCode = data.first_SugarPurchaseHead_data.Ac_Code
-                Unitname = data.first_SugarPurchasedetail_data[0].Unit_Name
-                UnitCode = data.first_SugarPurchaseHead_data.Unit_Code
-                MillName = data.first_SugarPurchasedetail_data[0].Mill_Name
-                MillCode = data.first_SugarPurchaseHead_data.mill_code
-                BrokerName = data.first_SugarPurchasedetail_data[0].Broker_Name
-                BrokerCode = data.first_SugarPurchaseHead_data.BROKER
-                GstRateName = data.first_SugarPurchasedetail_data[0].GST_Name
-                GstRateCode = data.first_SugarPurchaseHead_data.GstRateCode
-                ItemName = data.first_SugarPurchasedetail_data[0].ItemName
-                ItemCodeNew = data.first_SugarPurchaseHead_data.item_code
-                BrandName = data.first_SugarPurchasedetail_data[0].Brand_Name
-                BrandCode = data.first_SugarPurchaseHead_data.Branch_Code
+                purchaseidNew = data.getData_SugarPurchaseHead_data.purchaseid
+                FromName = data.getData_SugarPurchaseDetail_data[0].FromName
+                FromCode = data.getData_SugarPurchaseHead_data.Ac_Code
+                Unitname = data.getData_SugarPurchaseDetail_data[0].Unit_Name
+                UnitCode = data.getData_SugarPurchaseHead_data.Unit_Code
+                MillName = data.getData_SugarPurchaseDetail_data[0].Mill_Name
+                MillCode = data.getData_SugarPurchaseHead_data.mill_code
+                BrokerName = data.getData_SugarPurchaseDetail_data[0].Broker_Name
+                BrokerCode = data.getData_SugarPurchaseHead_data.BROKER
+                GstRateName = data.getData_SugarPurchaseDetail_data[0].GST_Name
+                GstRateCode = data.getData_SugarPurchaseHead_data.GstRateCode
+                ItemName = data.getData_SugarPurchaseDetail_data[0].ItemName
+                ItemCodeNew = data.getData_SugarPurchaseHead_data.item_code
+                BrandName = data.getData_SugarPurchaseDetail_data[0].Brand_Name
+                BrandCode = data.getData_SugarPurchaseHead_data.Branch_Code
+                subTotal = data.getData_SugarPurchaseHead_data.subTotal
+                globalQuantalTotal = data.getData_SugarPurchaseHead_data.NETQNTL
+
 
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
-                    ...data.first_SugarPurchaseHead_data
+                    ...data.getData_SugarPurchaseHead_data
                 }));
-                setLastTenderData(data.first_SugarPurchaseHead_data || {});
-                setLastTenderDetails(data.first_SugarPurchasedetail_data || []);
-                setTranType(selectedRecord.tran_type)
-
+                setLastTenderData(data.getData_SugarPurchaseHead_data || {});
+                setLastTenderDetails(data.getData_SugarPurchaseDetail_data || []);
             } else {
                 console.error("Failed to fetch last tender data:", response.status, response.statusText);
             }
@@ -703,33 +706,34 @@ const SugarPurchase = () => {
             const changeNoValue = event.target.value;
             try {
                 const response = await axios.get(
-                    `${API_URL}/getdebitcreditByid?Company_Code=${companyCode}&doc_no=${changeNoValue}&tran_type=${tranType}&Year_Code=${Year_Code}`
+                    `${API_URL}/getsugarpurchasebyid?Company_Code=${companyCode}&doc_no=${changeNoValue}&Year_Code=${Year_Code}`
                 );
                 const data = response.data
-                FromName = data.first_SugarPurchasedetail_data[0].FromName
-                FromCode = data.first_SugarPurchaseHead_data.Ac_Code
-                Unitname = data.first_SugarPurchasedetail_data[0].Unit_Name
-                UnitCode = data.first_SugarPurchaseHead_data.Unit_Code
-                MillName = data.first_SugarPurchasedetail_data[0].Mill_Name
-                MillCode = data.first_SugarPurchaseHead_data.mill_code
-                BrokerName = data.first_SugarPurchasedetail_data[0].Broker_Name
-                BrokerCode = data.first_SugarPurchaseHead_data.BROKER
-                GstRateName = data.first_SugarPurchasedetail_data[0].GST_Name
-                GstRateCode = data.first_SugarPurchaseHead_data.GstRateCode
-                ItemName = data.first_SugarPurchasedetail_data[0].ItemName
-                ItemCodeNew = data.first_SugarPurchaseHead_data.item_code
-                BrandName = data.first_SugarPurchasedetail_data[0].Brand_Name
-                BrandCode = data.first_SugarPurchaseHead_data.Branch_Code
+                purchaseidNew = data.getData_SugarPurchaseHead_data.purchaseid
+                FromName = data.getData_SugarPurchaseDetail_data[0].FromName
+                FromCode = data.getData_SugarPurchaseHead_data.Ac_Code
+                Unitname = data.getData_SugarPurchaseDetail_data[0].Unit_Name
+                UnitCode = data.getData_SugarPurchaseHead_data.Unit_Code
+                MillName = data.getData_SugarPurchaseDetail_data[0].Mill_Name
+                MillCode = data.getData_SugarPurchaseHead_data.mill_code
+                BrokerName = data.getData_SugarPurchaseDetail_data[0].Broker_Name
+                BrokerCode = data.getData_SugarPurchaseHead_data.BROKER
+                GstRateName = data.getData_SugarPurchaseDetail_data[0].GST_Name
+                GstRateCode = data.getData_SugarPurchaseHead_data.GstRateCode
+                ItemName = data.getData_SugarPurchaseDetail_data[0].ItemName
+                ItemCodeNew = data.getData_SugarPurchaseHead_data.item_code
+                BrandName = data.getData_SugarPurchaseDetail_data[0].Brand_Name
+                BrandCode = data.getData_SugarPurchaseHead_data.Branch_Code
+                subTotal = data.getData_SugarPurchaseHead_data.subTotal
+                globalQuantalTotal = data.getData_SugarPurchaseHead_data.NETQNTL
 
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
-                    ...data.first_SugarPurchaseHead_data
+                    ...data.getData_SugarPurchaseHead_data
                 }));
-                setLastTenderData(data.first_SugarPurchaseHead_data || {});
-                setLastTenderDetails(data.first_SugarPurchasedetail_data || []);
-                // setTranType(selectedRecord.tran_type)
-                //setFormData(data);
+                setLastTenderData(data.getData_SugarPurchaseHead_data || {});
+                setLastTenderDetails(data.getData_SugarPurchaseDetail_data || []);
                 setIsEditing(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -861,7 +865,7 @@ const SugarPurchase = () => {
         openPopup();
     };
 
-    const addUser = () => {
+    const addUser = async () => {
         const newUser = {
             id: users.length > 0 ? Math.max(...users.map((user) => user.id)) + 1 : 1,
             item_code: itemSelect,
@@ -869,8 +873,8 @@ const SugarPurchase = () => {
             Brand_Code: brandCode,
             ...formDataDetail,
             rowaction: "add",
-
         };
+
         // Calculate subTotal based on all users including newUser
         const newUsers = [...users, newUser];
         const totalItemAmount = newUsers.reduce((total, user) => {
@@ -879,84 +883,422 @@ const SugarPurchase = () => {
         subTotal = totalItemAmount.toFixed(2);
 
 
+        // Calculate total Quantal based on all users including newUser
+        const totalQuantal = newUsers.reduce((total, user) => {
+            return total + parseFloat(user.Quantal);
+        }, 0);
+        globalQuantalTotal = totalQuantal; // Update the global variable
+
+
         setFormDataDetail({
             ...newUser,
             subTotal: subTotal
         });
+
+        if (from != "" || FromCode !="") {
+            // Make an API call to fetch match status
+            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
+                params: {
+                    Company_Code: companyCode, 
+                    Year_Code: Year_Code,     
+                    Ac_Code: cancelButtonClicked ? FromCode : from             
+                }
+            });
+
+            const { match_status } = response.data;
+
+            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
+            const gstRateDivide = parseFloat(gstRate);
+
+
+            // Calculate CGST, SGST, and IGST rates based on the given GST rate
+            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
+            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
+            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
+
+            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
+            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
+            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
+
+            let billAmount;
+            let netPayable;
+
+            console.log("subTotal", subTotal)
+
+            // Update formData based on match_status
+            if (match_status === "TRUE") {
+                billAmount = billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    SGSTRate: sgstRate.toFixed(2),
+                    IGSTRate: 0.00, // Reset IGST rate
+                    CGSTAmount: cgstAmount,
+                    SGSTAmount: sgstAmount,
+                    IGSTAmount: 0.00, // Reset IGST amount
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            } else {
+                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: 0.00, // Reset CGST rate
+                    SGSTRate: 0.00, // Reset SGST rate
+                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    CGSTAmount: 0.00, // Reset CGST amount
+                    SGSTAmount: 0.00, // Reset SGST amount
+                    IGSTAmount: igstAmount,
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            }
+        }
+
         setUsers([...users, newUser]);
         closePopup();
     };
 
+
+
     //Update User On Grid
-    const updateUser = () => {
+    const updateUser = async () => {
         const updatedUsers = users.map((user) => {
             if (user.id === selectedUser.id) {
-                const updatedRowaction =
-                    user.rowaction === "Normal" ? "update" : user.rowaction;
+                const updatedRowaction = user.rowaction === "Normal" ? "update" : user.rowaction;
+    
+                // Calculate updated item_Amount
+                const updatedItemAmount = (parseFloat(formDataDetail.Quantal) * parseFloat(formDataDetail.rate)).toFixed(2);
+    
                 return {
                     ...user,
                     item_code: itemSelect,
                     ic: itemSelectAccoid,
                     Brand_Code: brandCode,
                     ...formDataDetail,
+                    item_Amount: updatedItemAmount,
                     rowaction: updatedRowaction,
                 };
             } else {
                 return user;
             }
         });
+    
+        // Calculate new subTotal
+        const totalItemAmount = updatedUsers.reduce((total, user) => {
+            return total + parseFloat(user.item_Amount);
+        }, 0);
+        subTotal = totalItemAmount.toFixed(2); 
+    
+        // Calculate total Quantal based on all users
+        const totalQuantal = updatedUsers.reduce((total, user) => {
+            return total + parseFloat(user.Quantal);
+        }, 0);
+        globalQuantalTotal = totalQuantal; 
 
+        setFormDataDetail({
+            ...updatedUsers,
+            subTotal: subTotal
+        });
+    
+        if (from != "" || FromCode != "") {
+            // Make an API call to fetch match status
+            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
+                params: {
+                    Company_Code: companyCode,
+                    Year_Code: Year_Code,
+                    Ac_Code: cancelButtonClicked ? FromCode : from
+                }
+            });
+    
+            const { match_status } = response.data;
+    
+            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
+            const gstRateDivide = parseFloat(gstRate);
+    
+            // Calculate CGST, SGST, and IGST rates based on the given GST rate
+            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
+            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
+            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
+    
+            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
+            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
+            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
+    
+            let billAmount;
+            let netPayable;
+    
+            console.log("subTotal", subTotal)
+    
+            // Update formData based on match_status
+            if (match_status === "TRUE") {
+                billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    SGSTRate: sgstRate.toFixed(2),
+                    IGSTRate: 0.00, // Reset IGST rate
+                    CGSTAmount: cgstAmount,
+                    SGSTAmount: sgstAmount,
+                    IGSTAmount: 0.00, // Reset IGST amount
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            } else {
+                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: 0.00, // Reset CGST rate
+                    SGSTRate: 0.00, // Reset SGST rate
+                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    CGSTAmount: 0.00, // Reset CGST amount
+                    SGSTAmount: 0.00, // Reset SGST amount
+                    IGSTAmount: igstAmount,
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            }
+        }
+    
         setUsers(updatedUsers);
         closePopup();
     };
 
-    //Delete User On Grid
-    const deleteModeHandler = (user) => {
-        if (isEditMode && user.rowaction === "add") {
-            setDeleteMode(true);
-            setSelectedUser(user);
-            const updatedUsers = users.map((u) =>
-                u.id === user.id ? { ...u, rowaction: "DNU" } : u
+
+    const deleteModeHandler = async(userToDelete) => {
+        let updatedUsers;
+
+        if (isEditMode && userToDelete.rowaction === "add") {
+            updatedUsers = users.map((u) =>
+                u.id === userToDelete.id ? { ...u, rowaction: "DNU" } : u
             );
-            setUsers(updatedUsers);
-            setSelectedUser({});
         } else if (isEditMode) {
-            setDeleteMode(true);
-            setSelectedUser(user);
-            const updatedUsers = users.map((u) =>
-                u.id === user.id ? { ...u, rowaction: "delete" } : u
+            updatedUsers = users.map((u) =>
+                u.id === userToDelete.id ? { ...u, rowaction: "delete" } : u
             );
-            setUsers(updatedUsers);
-            setSelectedUser({});
         } else {
-            setDeleteMode(true);
-            setSelectedUser(user);
-            const updatedUsers = users.map((u) =>
-                u.id === user.id ? { ...u, rowaction: "DNU" } : u
+            updatedUsers = users.map((u) =>
+                u.id === userToDelete.id ? { ...u, rowaction: "DNU" } : u
             );
-            setUsers(updatedUsers);
-            setSelectedUser({});
         }
+
+        // Calculate new subTotal
+        const totalItemAmount = updatedUsers.reduce((total, u) => {
+            if (u.rowaction !== "delete" && u.rowaction !== "DNU") {
+                return total + parseFloat(u.item_Amount || 0);
+            } else {
+                return total; 
+            }
+        }, 0);
+
+        // Update subTotal state
+        subTotal = (totalItemAmount.toFixed(2));
+
+         // Calculate total Quantal based on all users
+         const totalQuantal = updatedUsers.reduce((total, u) => {
+            if (u.rowaction !== "delete" && u.rowaction !== "DNU") {
+            return total + parseFloat(u.Quantal);
+        } else {
+            return total; 
+        }
+        }, 0);
+
+        globalQuantalTotal = totalQuantal; 
+
+        setFormDataDetail({
+            ...updatedUsers,
+            subTotal: subTotal
+            // updatedUsers: updatedUsers
+        });
+
+
+        if (from != "" || FromCode != "") {
+            // Make an API call to fetch match status
+            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
+                params: {
+                    Company_Code: companyCode,
+                    Year_Code: Year_Code,
+                    Ac_Code: cancelButtonClicked ? FromCode : from
+                }
+            });
+    
+            const { match_status } = response.data;
+    
+            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
+            const gstRateDivide = parseFloat(gstRate);
+    
+            // Calculate CGST, SGST, and IGST rates based on the given GST rate
+            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
+            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
+            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
+    
+            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
+            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
+            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
+    
+            let billAmount;
+            let netPayable;
+    
+            console.log("subTotal", subTotal)
+    
+            // Update formData based on match_status
+            if (match_status === "TRUE") {
+                billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    SGSTRate: sgstRate.toFixed(2),
+                    IGSTRate: 0.00, // Reset IGST rate
+                    CGSTAmount: cgstAmount,
+                    SGSTAmount: sgstAmount,
+                    IGSTAmount: 0.00, // Reset IGST amount
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            } else {
+                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: 0.00, // Reset CGST rate
+                    SGSTRate: 0.00, // Reset SGST rate
+                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    CGSTAmount: 0.00, // Reset CGST amount
+                    SGSTAmount: 0.00, // Reset SGST amount
+                    IGSTAmount: igstAmount,
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            }
+        }
+    
+
+        // Update users state, delete mode, and selected user
+        setUsers(updatedUsers);
+        setDeleteMode(true); // Assuming you need to set delete mode to true
+        setSelectedUser(userToDelete);
     };
 
+
     //Functionality After delete record undo deleted record.
-    const openDelete = (user) => {
+    const openDelete = async(user) => {
+        let updatedUsers;
+
+        // Set delete mode and selected user
         setDeleteMode(true);
         setSelectedUser(user);
+
+        // Determine action based on edit mode and row action
         if (isEditMode && user.rowaction === "delete") {
-            const updatedUsers = users.map((u) =>
+            updatedUsers = users.map((u) =>
                 u.id === user.id ? { ...u, rowaction: "Normal" } : u
             );
-            setUsers(updatedUsers);
-            setSelectedUser({});
         } else {
-            setDeleteMode(false);
-            const updatedUsers = users.map((u) =>
+            updatedUsers = users.map((u) =>
                 u.id === user.id ? { ...u, rowaction: "add" } : u
             );
-            setUsers(updatedUsers);
-            setSelectedUser({});
         }
+
+        // Calculate new subTotal after updating users
+        const totalItemAmount = updatedUsers.reduce((total, u) => {
+            return total + parseFloat(u.item_Amount || 0);
+        }, 0);
+
+        // Update subTotal state
+        const updatedSubTotal = totalItemAmount.toFixed(2);
+        subTotal = updatedSubTotal
+
+          // Calculate total Quantal based on all users
+          const totalQuantal = updatedUsers.reduce((total, u) => {
+          
+            return total + parseFloat(u.Quantal || 0);
+      
+        }, 0);
+
+        globalQuantalTotal = totalQuantal; 
+
+        // Update formDataDetail with updatedUsers and subTotal
+        setFormDataDetail({
+            ...formDataDetail,
+            subTotal: subTotal,
+            updatedUsers: updatedUsers
+        });
+
+
+
+        if (from != "" || FromCode != "") {
+            // Make an API call to fetch match status
+            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
+                params: {
+                    Company_Code: companyCode,
+                    Year_Code: Year_Code,
+                    Ac_Code: cancelButtonClicked ? FromCode : from
+                }
+            });
+    
+            const { match_status } = response.data;
+    
+            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
+            const gstRateDivide = parseFloat(gstRate);
+    
+            // Calculate CGST, SGST, and IGST rates based on the given GST rate
+            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
+            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
+            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
+    
+            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
+            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
+            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
+    
+            let billAmount;
+            let netPayable;
+    
+            console.log("subTotal", subTotal)
+    
+            // Update formData based on match_status
+            if (match_status === "TRUE") {
+                billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    SGSTRate: sgstRate.toFixed(2),
+                    IGSTRate: 0.00, // Reset IGST rate
+                    CGSTAmount: cgstAmount,
+                    SGSTAmount: sgstAmount,
+                    IGSTAmount: 0.00, // Reset IGST amount
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            } else {
+                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: 0.00, // Reset CGST rate
+                    SGSTRate: 0.00, // Reset SGST rate
+                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                    CGSTAmount: 0.00, // Reset CGST amount
+                    SGSTAmount: 0.00, // Reset SGST amount
+                    IGSTAmount: igstAmount,
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            }
+        }
+    
+
+
+        // Update users state
+        setUsers(updatedUsers);
+
+        // Clear selected user
+        setSelectedUser({});
     };
 
     //Functionality to help section to set the record.
@@ -970,18 +1312,6 @@ const SugarPurchase = () => {
     const handleBrandCode = (code, accoid) => {
         setBrandCode(code);
         setBrandCodeAccoid(accoid)
-
-        // // Update expacAccoid for all users with the same expac_code
-        // const updatedUsers = users.map((user) => {
-        //     if (user.expac_code === code) {
-        //         return {
-        //             ...user,
-        //             expac: accoid,
-        //         };
-        //     }
-        //     return user;
-        // });
-        // setUsers(updatedUsers);
     };
 
     //Head Section help Functions to manage the Ac_Code and accoid
@@ -1028,13 +1358,17 @@ const SugarPurchase = () => {
         });
     }
 
-    const handleGstCode = (code, accoid) => {
+    const handleGstCode = async (code, Rate) => {
+
         setGstCode(code);
-        setFormData({
-            ...formData,
-            GstRateCode: code,
-        });
+        setGstRate(Rate);
+
     }
+
+    // Function to calculate GST amount based on rate and subtotal
+    const calculateGSTAmount = (subTotal, rate) => {
+        return (subTotal * (rate / 100)).toFixed(2);
+    };
 
     return (
         <>
@@ -1137,7 +1471,7 @@ const SugarPurchase = () => {
                     <div className="debitCreditNote-col">
                         <div className="debitCreditNote-form-group-type">
                             <select id="Retail_Stock" name="Retail_Stock" className="debitCreditNote-custom-select" value={formData.Retail_Stock}
-                                onChange={handleChange}  >
+                                onChange={handleChange} disabled={!isEditing && addOneButtonEnabled}  >
                                 <option value="Y">Yes</option>
                                 <option value="N">NO</option>
 
@@ -1622,7 +1956,7 @@ const SugarPurchase = () => {
                                 className="debitCreditNote-form-control"
                                 name="NETQNTL"
                                 autoComplete="off"
-                                value={formData.NETQNTL}
+                                value={globalQuantalTotal}
                                 onChange={handleChange}
                                 disabled={!isEditing && addOneButtonEnabled}
                             />

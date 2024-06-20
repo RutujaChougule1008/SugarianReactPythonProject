@@ -9,7 +9,8 @@ import {
     TableRow,
     Button,
     Grid,
-    Paper
+    Paper,
+    Typography
 } from "@mui/material";
 import Pagination from "../../../Common/UtilityCommon/Pagination";
 import SearchBar from "../../../Common/UtilityCommon/SearchBar";
@@ -26,7 +27,6 @@ function PurchaseBillUtility() {
     const [perPage, setPerPage] = useState(15);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [filterValue, setFilterValue] = useState("DN");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,8 +34,7 @@ function PurchaseBillUtility() {
             try {
                 const apiUrl = `${API_URL}/getdata-sugarpurchase?Company_Code=${companyCode}&Year_Code=${Year_Code}`;
                 const response = await axios.get(apiUrl);
-                console.log("Fetched data:", response.data.SugarPurchase_Head); // Debug log
-                if (response.data) {
+                if (response.data && response.data.SugarPurchase_Head) {
                     setFetchedData(response.data.SugarPurchase_Head);
                     setFilteredData(response.data.SugarPurchase_Head); 
                 }
@@ -50,21 +49,13 @@ function PurchaseBillUtility() {
     useEffect(() => {
         const filtered = fetchedData.filter(post => {
             const searchTermLower = searchTerm.toLowerCase();
-            const docNoLower = String(post.doc_no).toLowerCase();
-            const supplierNameLower = (post.Supplier_Name || '').toLowerCase();
-            const tranTypeLower = (post.Tran_Type || '').toLowerCase();
-
-            return (
-                (filterValue === "" || tranTypeLower === filterValue.toLowerCase()) &&
-                (docNoLower.includes(searchTermLower) ||
-                    supplierNameLower.includes(searchTermLower))
+            return Object.keys(post).some(key =>
+                String(post[key]).toLowerCase().includes(searchTermLower)
             );
         });
-
-        console.log("Filtered data:", filtered); // Debug log
         setFilteredData(filtered);
         setCurrentPage(1);
-    }, [searchTerm, filterValue, fetchedData]);
+    }, [searchTerm, fetchedData]);
 
     const handlePerPageChange = (event) => {
         setPerPage(event.target.value);
@@ -79,26 +70,21 @@ function PurchaseBillUtility() {
     const pageCount = Math.ceil(filteredData.length / perPage);
 
     const paginatedPosts = filteredData.slice((currentPage - 1) * perPage, currentPage * perPage);
-    console.log("Paginated posts:", paginatedPosts); // Debug log
-
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
     const handleClick = () => {
-        const selectedFilter = filterValue;
-        console.log("selectedRecord", selectedFilter);
-        navigate("/sugarpurchasebill", { state: { selectedFilter } });
+        navigate("/sugarpurchasebill");
     };
 
     const handleRowClick = (doc_no) => {
         const selectedRecord = filteredData.find(record => record.doc_no === doc_no);
-        console.log("Selected record:", selectedRecord); // Debug log
         navigate("/sugarpurchasebill", { state: { selectedRecord } });
     };
 
     const handleSearchClick = () => {
-        setFilterValue("");
+        // Handle search button click if needed
     };
 
     const handleBack = () => {
@@ -107,6 +93,9 @@ function PurchaseBillUtility() {
 
     return (
         <div className="container" style={{ padding: '20px', overflow: 'hidden' }}>
+            <Typography variant="h4" gutterBottom style={{ textAlign: 'center', marginBottom: '20px' }}>
+                Sugar Purchase Bill
+            </Typography>
             <Grid container spacing={2} alignItems="center">
                 <Grid item>
                     <Button variant="contained" color="primary" onClick={handleClick}>
@@ -121,7 +110,6 @@ function PurchaseBillUtility() {
                 <Grid item>
                     <PerPageSelect value={perPage} onChange={handlePerPageChange} />
                 </Grid>
-
                 <Grid item xs={12} sm={4} sx={{ marginLeft: 2 }}>
                     <SearchBar
                         value={searchTerm}
@@ -129,23 +117,20 @@ function PurchaseBillUtility() {
                         onSearchClick={handleSearchClick}
                     />
                 </Grid>
-             
                 <Grid item xs={12}>
                     <Paper elevation={3}>
                         <TableContainer style={{ maxHeight: '400px' }}>
-                            <Table>
+                            <Table stickyHeader>
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Doc No</TableCell>
                                         <TableCell>Doc Date</TableCell>
-                                        <TableCell>Supplier Name</TableCell>
                                         <TableCell>NETQNTL</TableCell>
                                         <TableCell>Bill Amount</TableCell>
                                         <TableCell>EWay Bill No</TableCell>
                                         <TableCell>Mill Inv Date</TableCell>
-                                        <TableCell>Invoice No</TableCell>
                                         <TableCell>PurchID</TableCell>
-                                        <TableCell>Do No</TableCell>
+                                        <TableCell>Purcid</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -158,12 +143,10 @@ function PurchaseBillUtility() {
                                         >
                                             <TableCell>{post.doc_no}</TableCell>
                                             <TableCell>{post.doc_date}</TableCell>
-                                            <TableCell>{post.Supplier_Name}</TableCell>
                                             <TableCell>{post.NETQNTL}</TableCell>
                                             <TableCell>{post.Bill_Amount}</TableCell>
                                             <TableCell>{post.EWay_Bill_No}</TableCell>
                                             <TableCell>{post.mill_inv_date}</TableCell>
-                                            <TableCell>{post.Invoice_No}</TableCell>
                                             <TableCell>{post.purchaseid}</TableCell>
                                             <TableCell>{post.Purcid}</TableCell>
                                         </TableRow>

@@ -1,0 +1,16 @@
+# Exclude node_modules directory
+node_modules/
+
+# Exclude logs and other generated files
+*.log
+*.json
+*.lock
+.DS_Store
+
+# Exclude environment-specific files
+.env
+.env.local
+
+# Exclude editor-specific files
+.vscode/
+.idea/

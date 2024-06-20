@@ -111,12 +111,12 @@ def getsugarpurchasebyid():
     
         # Prepare response data
         response = {
-            "last_SugarPurchaseHead_data": {
+            "getData_SugarPurchaseHead_data": {
                 **{column.name: getattr(task_head, column.name) for column in task_head.__table__.columns},
                 **format_dates(task_head),
                 # "category_name": category
             },
-            "last_SugarPurchaseDetail_data": additional_data_rows
+            "getData_SugarPurchaseDetail_data": additional_data_rows
         }
         # If record found, return it
         return jsonify(response), 200
