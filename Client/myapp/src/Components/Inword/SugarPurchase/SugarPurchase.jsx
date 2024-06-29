@@ -72,6 +72,7 @@ var globalQuantalTotal = 0
 var CGSTRate = 0.00 
 var SGSTRate= 0.00
 var IGSTRate = 0.00
+var BillAmountNew = 0.00
 
 var selectedfilter = ""
 const API_URL = process.env.REACT_APP_API;
@@ -88,7 +89,6 @@ const SugarPurchase = () => {
     const [brandCodeAccoid, setBrandCodeAccoid] = useState("");
     const [itemSelect, setItemSelect] = useState("");
     const [itemSelectAccoid, setItemSelectAccoid] = useState("");
-    const [hsnNo, setHSNNo] = useState("");
     const [formDataDetail, setFormDataDetail] = useState({
         Quantal: "",
         packing: "50",
@@ -189,7 +189,6 @@ const SugarPurchase = () => {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        console.log("handleChange", { name, value });
         // Call validateField to validate the field value
         validateField(name, value);
         setFormData((prevState) => ({
@@ -311,7 +310,8 @@ const SugarPurchase = () => {
         const headData = {
             ...formData,
             subTotal: subTotal,
-            NETQNTL: globalQuantalTotal
+            NETQNTL: globalQuantalTotal,
+            GstRateCode:gstCode
         };
 
         // Remove dcid from headData if in edit mode
@@ -456,6 +456,7 @@ const SugarPurchase = () => {
                 CGSTRate = data.last_SugarPurchasehead.CGSTRate
                 SGSTRate = data.last_SugarPurchasehead.SGSTRate
                 IGSTRate  = data.last_SugarPurchasehead.IGSTRate
+                BillAmountNew = data.last_SugarPurchasehead.Bill_Amount
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
@@ -503,6 +504,10 @@ const SugarPurchase = () => {
                 BrandCode = data.first_SugarPurchaseHead_data.Branch_Code
                 subTotal = data.first_SugarPurchaseHead_data.subTotal
                 globalQuantalTotal = data.first_SugarPurchaseHead_data.NETQNTL
+                CGSTRate = data.first_SugarPurchaseHead_data.CGSTRate
+                SGSTRate = data.first_SugarPurchaseHead_data.SGSTRate
+                IGSTRate  = data.first_SugarPurchaseHead_data.IGSTRate
+                BillAmountNew = data.first_SugarPurchaseHead_data.Bill_Amount
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
@@ -541,6 +546,10 @@ const SugarPurchase = () => {
                 BrandCode = data.last_SugarPurchaseHead_data.Branch_Code
                 subTotal = data.last_SugarPurchaseHead_data.subTotal
                 globalQuantalTotal = data.last_SugarPurchaseHead_data.NETQNTL
+                CGSTRate = data.last_SugarPurchaseHead_data.CGSTRate
+                SGSTRate = data.last_SugarPurchaseHead_data.SGSTRate
+                IGSTRate  = data.last_SugarPurchaseHead_data.IGSTRate
+                BillAmountNew = data.last_SugarPurchaseHead_data.Bill_Amount
 
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
@@ -581,6 +590,10 @@ const SugarPurchase = () => {
                 BrandCode = data.next_SugarPurchasehead_data.Branch_Code
                 subTotal = data.next_SugarPurchasehead_data.subTotal
                 globalQuantalTotal = data.next_SugarPurchasehead_data.NETQNTL
+                CGSTRate = data.next_SugarPurchasehead_data.CGSTRate
+                SGSTRate = data.next_SugarPurchasehead_data.SGSTRate
+                IGSTRate  = data.next_SugarPurchasehead_data.IGSTRate
+                BillAmountNew = data.next_SugarPurchasehead_data.Bill_Amount
 
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
@@ -622,7 +635,10 @@ const SugarPurchase = () => {
                 BrandCode = data.previous_SugarPurchaseHead_data.Branch_Code
                 subTotal = data.previous_SugarPurchaseHead_data.subTotal
                 globalQuantalTotal = data.previous_SugarPurchaseHead_data.NETQNTL
-
+                CGSTRate = data.previous_SugarPurchaseHead_data.CGSTRate
+                SGSTRate = data.previous_SugarPurchaseHead_data.SGSTRate
+                IGSTRate  = data.previous_SugarPurchaseHead_data.IGSTRate
+                BillAmountNew = data.previous_SugarPurchaseHead_data.Bill_Amount
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
@@ -683,8 +699,10 @@ const SugarPurchase = () => {
                 BrandCode = data.getData_SugarPurchaseHead_data.Branch_Code
                 subTotal = data.getData_SugarPurchaseHead_data.subTotal
                 globalQuantalTotal = data.getData_SugarPurchaseHead_data.NETQNTL
-
-
+                CGSTRate = data.getData_SugarPurchaseHead_data.CGSTRate
+                SGSTRate = data.getData_SugarPurchaseHead_data.SGSTRate
+                IGSTRate  = data.getData_SugarPurchaseHead_data.IGSTRate
+                BillAmountNew = data.getData_SugarPurchaseHead_data.Bill_Amount
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
@@ -726,7 +744,10 @@ const SugarPurchase = () => {
                 BrandCode = data.getData_SugarPurchaseHead_data.Branch_Code
                 subTotal = data.getData_SugarPurchaseHead_data.subTotal
                 globalQuantalTotal = data.getData_SugarPurchaseHead_data.NETQNTL
-
+                CGSTRate = data.getData_SugarPurchaseHead_data.CGSTRate
+                SGSTRate = data.getData_SugarPurchaseHead_data.SGSTRate
+                IGSTRate  = data.getData_SugarPurchaseHead_data.IGSTRate
+                BillAmountNew = data.getData_SugarPurchaseHead_data.Bill_Amount
                 // Ensure all fields are updated correctly
                 setFormData((prevData) => ({
                     ...prevData,
@@ -746,7 +767,6 @@ const SugarPurchase = () => {
         if (selectedRecord) {
             setUsers(
                 lastTenderDetails.map((detail) => ({
-
                     rowaction: "Normal",
                     id: detail.purchasedetailid,
                     purchasedetailid: detail.purchasedetailid,
@@ -769,7 +789,6 @@ const SugarPurchase = () => {
     useEffect(() => {
         setUsers(
             lastTenderDetails.map((detail) => ({
-
                 rowaction: "Normal",
                 id: detail.purchasedetailid,
                 purchasedetailid: detail.purchasedetailid,
@@ -825,7 +844,6 @@ const SugarPurchase = () => {
         setFormDataDetail(updatedFormDataDetail);
     };
 
-
     //open popup function
     const openPopup = () => {
         setShowPopup(true);
@@ -847,7 +865,6 @@ const SugarPurchase = () => {
             item_Amount: 0.00,
             narration: ""
         });
-
     };
 
     const editUser = (user) => {
@@ -865,7 +882,65 @@ const SugarPurchase = () => {
         openPopup();
     };
 
+    const fetchMatchStatus = async (params) => {
+        try {
+            const response = await axios.get(`${API_URL}/get_match_status`, { params });
+            return response.data.match_status;
+        } catch (error) {
+            console.error('Error fetching match status:', error);
+            return null;
+        }
+    };
+
+     const handleMatchStatus = (match_status, subTotal) => {
+        const gstRateDivide = parseFloat(gstRate);
+
+        // Calculate CGST, SGST, and IGST rates based on the given GST rate
+        const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
+        const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
+        const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
+
+        const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
+        const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
+        const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
+
+        let billAmount;
+        let netPayable;
+
+        // Update formData based on match_status
+        if (match_status === "TRUE") {
+            billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT) + parseFloat(formData.cash_advance);
+            netPayable = billAmount.toFixed(2);
+            setFormData({
+                ...formData,
+                CGSTRate: cgstRate.toFixed(2), 
+                SGSTRate: sgstRate.toFixed(2),
+                IGSTRate: 0.00, // Reset IGST rate
+                CGSTAmount: cgstAmount,
+                SGSTAmount: sgstAmount,
+                IGSTAmount: 0.00, // Reset IGST amount
+                Bill_Amount: billAmount,
+                TCS_Net_Payable: netPayable
+            });
+        } else {
+            billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT) + parseFloat(formData.cash_advance);
+            netPayable = billAmount.toFixed(2);
+            setFormData({
+                ...formData,
+                CGSTRate: 0.00, // Reset CGST rate
+                SGSTRate: 0.00, // Reset SGST rate
+                IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
+                CGSTAmount: 0.00, // Reset CGST amount
+                SGSTAmount: 0.00, 
+                IGSTAmount: igstAmount,
+                Bill_Amount: billAmount,
+                TCS_Net_Payable: netPayable
+            });
+        }
+    };
+
     const addUser = async () => {
+        debugger;
         const newUser = {
             id: users.length > 0 ? Math.max(...users.map((user) => user.id)) + 1 : 1,
             item_code: itemSelect,
@@ -874,7 +949,6 @@ const SugarPurchase = () => {
             ...formDataDetail,
             rowaction: "add",
         };
-
         // Calculate subTotal based on all users including newUser
         const newUsers = [...users, newUser];
         const totalItemAmount = newUsers.reduce((total, user) => {
@@ -882,89 +956,36 @@ const SugarPurchase = () => {
         }, 0);
         subTotal = totalItemAmount.toFixed(2);
 
-
         // Calculate total Quantal based on all users including newUser
         const totalQuantal = newUsers.reduce((total, user) => {
             return total + parseFloat(user.Quantal);
         }, 0);
         globalQuantalTotal = totalQuantal; // Update the global variable
 
-
         setFormDataDetail({
             ...newUser,
             subTotal: subTotal
         });
 
-        if (from != "" || FromCode !="") {
-            // Make an API call to fetch match status
-            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
-                params: {
-                    Company_Code: companyCode, 
-                    Year_Code: Year_Code,     
-                    Ac_Code: cancelButtonClicked ? FromCode : from             
-                }
+        if (from !== "" || FromCode !== "") {
+            // Fetch match status
+            const match_status = await fetchMatchStatus({
+                Company_Code: companyCode, 
+                Year_Code: Year_Code,     
+                Ac_Code: cancelButtonClicked ? FromCode : from
             });
-
-            const { match_status } = response.data;
-
-            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
-            const gstRateDivide = parseFloat(gstRate);
-
-
-            // Calculate CGST, SGST, and IGST rates based on the given GST rate
-            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
-            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
-            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
-
-            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
-            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
-            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
-
-            let billAmount;
-            let netPayable;
-
-            console.log("subTotal", subTotal)
-
-            // Update formData based on match_status
-            if (match_status === "TRUE") {
-                billAmount = billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    SGSTRate: sgstRate.toFixed(2),
-                    IGSTRate: 0.00, // Reset IGST rate
-                    CGSTAmount: cgstAmount,
-                    SGSTAmount: sgstAmount,
-                    IGSTAmount: 0.00, // Reset IGST amount
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
-            } else {
-                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: 0.00, // Reset CGST rate
-                    SGSTRate: 0.00, // Reset SGST rate
-                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    CGSTAmount: 0.00, // Reset CGST amount
-                    SGSTAmount: 0.00, // Reset SGST amount
-                    IGSTAmount: igstAmount,
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
+    
+            if (match_status) {
+                handleMatchStatus(match_status, subTotal);
             }
         }
-
         setUsers([...users, newUser]);
         closePopup();
     };
 
-
-
     //Update User On Grid
     const updateUser = async () => {
+  
         const updatedUsers = users.map((user) => {
             if (user.id === selectedUser.id) {
                 const updatedRowaction = user.rowaction === "Normal" ? "update" : user.rowaction;
@@ -1003,64 +1024,16 @@ const SugarPurchase = () => {
             subTotal: subTotal
         });
     
-        if (from != "" || FromCode != "") {
-            // Make an API call to fetch match status
-            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
-                params: {
-                    Company_Code: companyCode,
-                    Year_Code: Year_Code,
-                    Ac_Code: cancelButtonClicked ? FromCode : from
-                }
+        if (from !== "" || FromCode !== "") {
+            // Fetch match status
+            const match_status = await fetchMatchStatus({
+                Company_Code: companyCode, 
+                Year_Code: Year_Code,     
+                Ac_Code: cancelButtonClicked ? FromCode : from
             });
     
-            const { match_status } = response.data;
-    
-            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
-            const gstRateDivide = parseFloat(gstRate);
-    
-            // Calculate CGST, SGST, and IGST rates based on the given GST rate
-            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
-            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
-            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
-    
-            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
-            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
-            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
-    
-            let billAmount;
-            let netPayable;
-    
-            console.log("subTotal", subTotal)
-    
-            // Update formData based on match_status
-            if (match_status === "TRUE") {
-                billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    SGSTRate: sgstRate.toFixed(2),
-                    IGSTRate: 0.00, // Reset IGST rate
-                    CGSTAmount: cgstAmount,
-                    SGSTAmount: sgstAmount,
-                    IGSTAmount: 0.00, // Reset IGST amount
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
-            } else {
-                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: 0.00, // Reset CGST rate
-                    SGSTRate: 0.00, // Reset SGST rate
-                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    CGSTAmount: 0.00, // Reset CGST amount
-                    SGSTAmount: 0.00, // Reset SGST amount
-                    IGSTAmount: igstAmount,
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
+            if (match_status) {
+                handleMatchStatus(match_status, subTotal);
             }
         }
     
@@ -1070,6 +1043,7 @@ const SugarPurchase = () => {
 
 
     const deleteModeHandler = async(userToDelete) => {
+        debugger;
         let updatedUsers;
 
         if (isEditMode && userToDelete.rowaction === "add") {
@@ -1109,75 +1083,26 @@ const SugarPurchase = () => {
 
         globalQuantalTotal = totalQuantal; 
 
-        setFormDataDetail({
-            ...updatedUsers,
-            subTotal: subTotal
-            // updatedUsers: updatedUsers
+          // Update formDataDetail with updatedUsers and subTotal
+          setFormDataDetail({
+            ...formDataDetail,  // Spread existing formDataDetail fields
+            ...updatedUsers.find(u => u.id === u.id),  // Spread only the updated user fields
+            subTotal: subTotal  // Set the updated subTotal
         });
 
-
-        if (from != "" || FromCode != "") {
-            // Make an API call to fetch match status
-            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
-                params: {
-                    Company_Code: companyCode,
-                    Year_Code: Year_Code,
-                    Ac_Code: cancelButtonClicked ? FromCode : from
-                }
+        if (from !== "" || FromCode !== "") {
+            // Fetch match status
+            const match_status = await fetchMatchStatus({
+                Company_Code: companyCode, 
+                Year_Code: Year_Code,     
+                Ac_Code: cancelButtonClicked ? FromCode : from
             });
     
-            const { match_status } = response.data;
-    
-            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
-            const gstRateDivide = parseFloat(gstRate);
-    
-            // Calculate CGST, SGST, and IGST rates based on the given GST rate
-            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
-            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
-            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
-    
-            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
-            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
-            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
-    
-            let billAmount;
-            let netPayable;
-    
-            console.log("subTotal", subTotal)
-    
-            // Update formData based on match_status
-            if (match_status === "TRUE") {
-                billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    SGSTRate: sgstRate.toFixed(2),
-                    IGSTRate: 0.00, // Reset IGST rate
-                    CGSTAmount: cgstAmount,
-                    SGSTAmount: sgstAmount,
-                    IGSTAmount: 0.00, // Reset IGST amount
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
-            } else {
-                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: 0.00, // Reset CGST rate
-                    SGSTRate: 0.00, // Reset SGST rate
-                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    CGSTAmount: 0.00, // Reset CGST amount
-                    SGSTAmount: 0.00, // Reset SGST amount
-                    IGSTAmount: igstAmount,
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
+            if (match_status) {
+                handleMatchStatus(match_status, subTotal);
             }
         }
     
-
         // Update users state, delete mode, and selected user
         setUsers(updatedUsers);
         setDeleteMode(true); // Assuming you need to set delete mode to true
@@ -1225,75 +1150,23 @@ const SugarPurchase = () => {
         // Update formDataDetail with updatedUsers and subTotal
         setFormDataDetail({
             ...formDataDetail,
-            subTotal: subTotal,
-            updatedUsers: updatedUsers
+            subTotal: updatedSubTotal
         });
 
-
-
-        if (from != "" || FromCode != "") {
-            // Make an API call to fetch match status
-            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
-                params: {
-                    Company_Code: companyCode,
-                    Year_Code: Year_Code,
-                    Ac_Code: cancelButtonClicked ? FromCode : from
-                }
+        if (from !== "" || FromCode !== "") {
+            // Fetch match status
+            const match_status = await fetchMatchStatus({
+                Company_Code: companyCode, 
+                Year_Code: Year_Code,     
+                Ac_Code: cancelButtonClicked ? FromCode : from
             });
     
-            const { match_status } = response.data;
-    
-            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
-            const gstRateDivide = parseFloat(gstRate);
-    
-            // Calculate CGST, SGST, and IGST rates based on the given GST rate
-            const cgstRate = cancelButtonClicked ? parseFloat(CGSTRate) : gstRateDivide / 2;
-            const sgstRate = cancelButtonClicked ? parseFloat(SGSTRate) : gstRateDivide / 2;
-            const igstRate = cancelButtonClicked ? parseFloat(IGSTRate) : gstRateDivide;
-    
-            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
-            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
-            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
-    
-            let billAmount;
-            let netPayable;
-    
-            console.log("subTotal", subTotal)
-    
-            // Update formData based on match_status
-            if (match_status === "TRUE") {
-                billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: cgstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    SGSTRate: sgstRate.toFixed(2),
-                    IGSTRate: 0.00, // Reset IGST rate
-                    CGSTAmount: cgstAmount,
-                    SGSTAmount: sgstAmount,
-                    IGSTAmount: 0.00, // Reset IGST amount
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
-            } else {
-                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT);
-                netPayable = billAmount.toFixed(2);
-                setFormData({
-                    ...formData,
-                    CGSTRate: 0.00, // Reset CGST rate
-                    SGSTRate: 0.00, // Reset SGST rate
-                    IGSTRate: igstRate.toFixed(2), // Convert rate to string with 2 decimal places
-                    CGSTAmount: 0.00, // Reset CGST amount
-                    SGSTAmount: 0.00, // Reset SGST amount
-                    IGSTAmount: igstAmount,
-                    Bill_Amount: billAmount,
-                    TCS_Net_Payable: netPayable
-                });
+            if (match_status) {
+                handleMatchStatus(match_status, subTotal);
             }
         }
     
-
-
+    
         // Update users state
         setUsers(updatedUsers);
 
@@ -1359,9 +1232,68 @@ const SugarPurchase = () => {
     }
 
     const handleGstCode = async (code, Rate) => {
-
         setGstCode(code);
         setGstRate(Rate);
+
+        if (from != "" || FromCode != "") {
+            // Make an API call to fetch match status
+            const response = await axios.get(`http://localhost:8080/api/sugarian/get_match_status`, {
+                params: {
+                    Company_Code: companyCode,
+                    Year_Code: Year_Code,
+                    Ac_Code: cancelButtonClicked ? FromCode : from
+                }
+            });
+    
+            const { match_status } = response.data;
+    
+            // Convert Rate to a float (assuming Rate is a percentage string like "5%")
+            const gstRateDivide = parseFloat(Rate);
+    
+            // Calculate CGST, SGST, and IGST rates based on the given GST rate
+            const cgstRate = gstRateDivide / 2;
+            const sgstRate = gstRateDivide / 2;
+            const igstRate = gstRateDivide;
+    
+            const cgstAmount = parseFloat(calculateGSTAmount(subTotal, cgstRate)).toFixed(2);
+            const sgstAmount = parseFloat(calculateGSTAmount(subTotal, sgstRate)).toFixed(2);
+            const igstAmount = parseFloat(calculateGSTAmount(subTotal, igstRate)).toFixed(2);
+    
+            let billAmount;
+            let netPayable;
+    
+            // Update formData based on match_status
+            if (match_status === "TRUE") {
+                billAmount = parseFloat(subTotal) + parseFloat(cgstAmount) + parseFloat(sgstAmount) + parseFloat(formData.OTHER_AMT) + parseFloat(formData.cash_advance);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: cgstRate.toFixed(2), 
+                    SGSTRate: sgstRate.toFixed(2),
+                    IGSTRate: 0.00, 
+                    CGSTAmount: cgstAmount,
+                    SGSTAmount: sgstAmount,
+                    IGSTAmount: 0.00, 
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            } else {
+                billAmount = parseFloat(subTotal) + parseFloat(igstAmount) + parseFloat(formData.OTHER_AMT) + parseFloat(formData.cash_advance);
+                netPayable = billAmount.toFixed(2);
+                setFormData({
+                    ...formData,
+                    CGSTRate: 0.00, 
+                    SGSTRate: 0.00, 
+                    IGSTRate: igstRate.toFixed(2), 
+                    CGSTAmount: 0.00,
+                    SGSTAmount: 0.00,
+                    IGSTAmount: igstAmount,
+                    Bill_Amount: billAmount,
+                    TCS_Net_Payable: netPayable
+                });
+            }
+        }
+    
 
     }
 
@@ -1370,13 +1302,46 @@ const SugarPurchase = () => {
         return (subTotal * (rate / 100)).toFixed(2);
     };
 
+
+    const handleKeyDownOther = (e) => {
+        if (e.key === 'Tab') {
+            const { name, value } = e.target;
+    
+            // Validate input
+            if (!isNaN(value) && value.trim() !== "") {
+                const amount = parseFloat(value);
+    
+                // Calculate updated billAmount and netPayable
+                let updatedBillAmount = parseFloat(formData.Bill_Amount);
+    
+                if (name === "cash_advance") {
+                    updatedBillAmount += amount;
+                } else if (name === "OTHER_AMT") {
+                    if (amount > 0) {
+                        updatedBillAmount += amount;
+                    } else {
+                        updatedBillAmount += amount; 
+                    }
+                }
+                const updatedNetPayable = updatedBillAmount.toFixed(2);
+                // Update the form data with the new amounts
+                setFormData((prevData) => ({
+                    ...prevData,
+                    Bill_Amount: updatedBillAmount.toFixed(2),
+                    TCS_Net_Payable: updatedNetPayable,
+                }));
+            }
+        }
+    };
+    
+
     return (
         <>
             <ToastContainer />
             <h3 className="mt-4 mb-4 text-center custom-heading">
                 Sugar Purchase For GST
             </h3>
-            <button style={{ marginBottom: "-80px" }} className="btn btn-primary">Print</button>
+            {/* <button style={{ marginBottom: "-80px" }} className="btn btn-primary">Print</button> */}
             {/* Action button  */}
             <div className="container">
                 <ActionButtonGroup
@@ -1942,11 +1907,7 @@ const SugarPurchase = () => {
                 <br></br>
                 <br></br>
                 <br></br>
-
-
                 <div className="debitCreditNote-row">
-
-
                     <label className="debitCreditNote-form-label">Net Quental:</label>
                     <div className="debitCreditNote-col-Text">
                         <div className="debitCreditNote-form-group">
@@ -1993,8 +1954,6 @@ const SugarPurchase = () => {
                             />
                         </div>
                     </div>
-
-
                 </div>
                 <div className="debitCreditNote-row">
                     <label className="debitCreditNote-form-label">Subtotal:</label>
@@ -2154,7 +2113,8 @@ const SugarPurchase = () => {
                                 name="OTHER_AMT"
                                 autoComplete="off"
                                 value={formData.OTHER_AMT}
-                                onChange={handleChange}
+                               onKeyDown={handleKeyDownOther}
+                               onChange={handleChange}
                                 disabled={!isEditing && addOneButtonEnabled}
                             />
                             {formErrors.OTHER_AMT && <span className="error">{formErrors.OTHER_AMT}</span>}
@@ -2172,6 +2132,7 @@ const SugarPurchase = () => {
                                 name="cash_advance"
                                 autoComplete="off"
                                 value={formData.cash_advance}
+                                onKeyDown={handleKeyDownOther}
                                 onChange={handleChange}
                                 disabled={!isEditing && addOneButtonEnabled}
                             />
@@ -2274,8 +2235,6 @@ const SugarPurchase = () => {
                         </div>
                     </div>
                 </div>
-
-
             </form>
         </>
     );

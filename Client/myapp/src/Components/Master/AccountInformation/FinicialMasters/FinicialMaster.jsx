@@ -164,7 +164,6 @@ const FinicialMaster = () => {
 
     const handleDelete = async () => {
         const isConfirmed = window.confirm(`Are you sure you want to delete this Accounting ${formData.group_Code}?`);
-
         if (isConfirmed) {
             setIsEditMode(false);
             setAddOneButtonEnabled(true);
@@ -173,7 +172,6 @@ const FinicialMaster = () => {
             setBackButtonEnabled(true);
             setSaveButtonEnabled(false);
             setCancelButtonEnabled(false);
-
             try {
                 const deleteApiUrl = `${API_URL}/delete-finicial-group?group_Code=${formData.group_Code}&Company_Code=${companyCode}`;
                 const response = await axios.delete(deleteApiUrl);

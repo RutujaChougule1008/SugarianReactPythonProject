@@ -26,7 +26,10 @@ const GSTRateMasterHelp = ({ onAcCodeClick, name, GstRateName,GstRateCode,disabl
         try {
             const response = await axios.get(`http://localhost:8080/api/sugarian/gst_rate_master?Company_Code=${CompanyCode}`);
             const data = response.data;
-            setPopupContent(data);
+            const filteredData = data.filter(item => 
+                item.GST_Name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setPopupContent(filteredData);
             setShowModal(true);
         } catch (error) {
             console.error("Error fetching data:", error);

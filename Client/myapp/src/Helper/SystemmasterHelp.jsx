@@ -65,7 +65,7 @@ const SystemHelpMaster = ({ onAcCodeClick, name, CategoryName, CategoryCode, tab
             setEnteredHSN(matchingItem.HSN)
 
             if (onAcCodeClick) {
-                onAcCodeClick(matchingItem.Category_Code, matchingItem.accoid, matchingItem.HSN);
+                onAcCodeClick(matchingItem.Category_Code, matchingItem.accoid, matchingItem.HSN, matchingItem.Category_Name);
             }
         } else {
             setEnteredName("");
@@ -80,7 +80,7 @@ const SystemHelpMaster = ({ onAcCodeClick, name, CategoryName, CategoryCode, tab
         setEnteredAccoid(item.accoid);
         setEnteredHSN(item.HSN)
         if (onAcCodeClick) {
-            onAcCodeClick(item.Category_Code, item.accoid, item.HSN);
+            onAcCodeClick(item.Category_Code, item.accoid, item.HSN, item.Category_Name);
         }
         setShowModal(false);
     };
@@ -160,7 +160,6 @@ const SystemHelpMaster = ({ onAcCodeClick, name, CategoryName, CategoryCode, tab
                         disabled={disabledField}
                     />
                     <Button
-                        tabIndex={tabIndexHelp}
                         variant="primary"
                         onClick={handleButtonClicked}
                         className="ms-1"

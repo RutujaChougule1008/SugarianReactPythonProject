@@ -20,8 +20,10 @@ import Pagination from "../../../../Common/UtilityCommon/Pagination";
 import SearchBar from "../../../../Common/UtilityCommon/SearchBar";
 import PerPageSelect from "../../../../Common/UtilityCommon/PerPageSelect";
 import axios from "axios";
+import { io } from "socket.io-client";
 
 const API_URL = process.env.REACT_APP_API;
+const socketUrl = process.env.REACT_APP_API_URL
 const companyCode = sessionStorage.getItem('Company_Code');
 const Year_Code = sessionStorage.getItem('Year_Code');
 
@@ -47,6 +49,44 @@ function FinicialGroups() {
         };
 
         fetchData();
+    }, []);
+
+    useEffect(() => {
+        const socket = io(socketUrl);
+
+        socket.on('connect', () => {
+            console.log('Connected to socket server');
+        });
+
+        socket.on('addGroup', (newGroup) => {
+            setFetchedData((prevData) => [...prevData, newGroup]);
+            console.log('New group added:', newGroup);
+        });
+
+
+        socket.on('updateGroup', (updatedGroup) => {
+            setFetchedData((prevData) => 
+                prevData.map((group) =>
+                    group.group_Code === updatedGroup.group_Code ? updatedGroup : group
+                )
+            );
+            console.log("updatedGroup",updatedGroup)
+        });
+
+        socket.on('deleteGroup', (deletedGroup) => {
+            setFetchedData((prevData) =>
+                prevData.filter((group) => group.group_Code !== deletedGroup.group_Code)
+            );
+            console.log('Group deleted:', deletedGroup);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from socket server');
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
 

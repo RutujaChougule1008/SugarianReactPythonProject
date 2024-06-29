@@ -1,8 +1,14 @@
 # app/routes/group_routes.py
 from flask import jsonify, request
-from app import app, db
+from app import app, db,socketio
 from app.models.Masters.AccountInformation.FinicialMasterModels import GroupMaster
 import os
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
+
+app.config['SECRET_KEY'] = 'ABCDEFGHIJKLMNOPQRST'
+CORS(app, cors_allowed_origins="*")
+
 # Get the base URL from environment variables
 API_URL = os.getenv('API_URL')
 
@@ -122,6 +128,9 @@ def create_group():
         db.session.add(new_group)
         db.session.commit()
 
+        # Emit the addgroup data to all connected clients
+        socketio.emit('addGroup',new_group_data)
+
         return jsonify({
             'message': 'Group created successfully',
             'group': new_group_data
@@ -130,7 +139,6 @@ def create_group():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
     
-
 # Update a group API
 @app.route(API_URL+"/update-finicial-group", methods=["PUT"])
 def update_group():
@@ -158,6 +166,9 @@ def update_group():
             setattr(group, key, value)
 
         db.session.commit()
+
+        # Emit the updated group data to all connected clients
+        socketio.emit('updateGroup',update_data)
 
         return jsonify({
             'message': 'Group updated successfully',
@@ -191,7 +202,13 @@ def delete_group():
         db.session.delete(group)
         db.session.commit()
 
-        return jsonify({'message': 'Group deleted successfully'})
+        # Emit the updated group data to all connected clients
+        socketio.emit('deleteGroup', {'group_Code': group_code})
+
+        return jsonify({
+            'message': 'Group deleted successfully',
+            # 'group': group
+        })
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

@@ -92,6 +92,7 @@ const CompanyList = () => {
       });
       if (selectedAccountingYear) {
         sessionStorage.setItem('Year_Code', selectedAccountingYear.yearCode);
+        sessionStorage.setItem('username', username);
       }
       setIsLoggedIn(true);
       toast.success("Logged in successfully!");

@@ -5,6 +5,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from flask_jwt_extended import JWTManager
+from flask_socketio import SocketIO
 
 # Load environment variables from .env file
 load_dotenv()
@@ -21,6 +22,9 @@ db = SQLAlchemy(app)
 # Initialize JWTManager with your app 
 app.config['JWT_SECRET_KEY'] = 'ABCEFGHIJKLMNOPQRSTUVWXYZ'
 jwt = JWTManager(app)
+
+# Initialize SocketIO
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
 # The rest of your application configuration and routes
 
@@ -62,4 +66,4 @@ from app.Controllers.Masters.AccountInformation.AccountMaster.AccountMasterContr
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, host='localhost', port=8080, debug=True)

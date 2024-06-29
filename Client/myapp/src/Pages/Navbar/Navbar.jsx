@@ -100,7 +100,7 @@ const Navbar = () => {
               <a className="submenu-item"><Link to="/create-utility">Create Company</Link></a>
             </div>
             <div className="submenu-item">
-              <a href="/select-company">Select Company</a>
+              <a className="submenu-item"><Link to="/select-company">Select Company</Link></a>
             </div>
             <div className="submenu-item">
               <a href="/create-accounting-year">Create Accounting Year</a>
@@ -211,7 +211,7 @@ const Navbar = () => {
         {activeMenu === "inward" && (
           <div className="submenu">
             <div className="submenu-item">
-              <a href="/sugarpurchasebill-utility">Purchase Bill</a>
+              <a ><Link to="/sugarpurchasebill-utility">Purchase Bill</Link></a>
             </div>
             <div className="submenu-item">
               <a href="/other-gst-input">Other GST Input</a>

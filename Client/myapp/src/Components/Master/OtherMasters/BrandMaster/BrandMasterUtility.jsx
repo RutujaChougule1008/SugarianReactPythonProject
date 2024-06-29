@@ -156,8 +156,8 @@ function BrandMasterUtility() {
                                             <TableCell>{post.Code}</TableCell>
                                             <TableCell>{post.Marka}</TableCell>
                                             <TableCell>{post.Type}</TableCell>
-                                            <TableCell>{post.group_Summary}</TableCell>
-                                            <TableCell>{post.group_Type}</TableCell>
+                                            <TableCell>{post.Mal_Code}</TableCell>
+                                            <TableCell>{post.System_Name_E}</TableCell>
 
                                         </TableRow>
                                     ))}

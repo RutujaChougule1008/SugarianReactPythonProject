@@ -64,7 +64,7 @@ const AccountMasterHelp = ({ onAcCodeClick, name, CategoryName, CategoryCode,tab
             setEnteredAccoid(matchingItem.accoid);
 
             if (onAcCodeClick) {
-                onAcCodeClick(matchingItem.Ac_Code, matchingItem.accoid);
+                onAcCodeClick(matchingItem.Ac_Code, matchingItem.accoid, matchingItem.Ac_Name_E);
             }
         } else {
             setEnteredAcName("");
@@ -77,7 +77,7 @@ const AccountMasterHelp = ({ onAcCodeClick, name, CategoryName, CategoryCode,tab
         setEnteredAcName(item.Ac_Name_E);
         setEnteredAccoid(item.accoid);
         if (onAcCodeClick) {
-            onAcCodeClick(item.Ac_Code, item.accoid);
+            onAcCodeClick(item.Ac_Code, item.accoid, item.Ac_Name_E);
         }
         setShowModal(false);
     };
@@ -115,6 +115,7 @@ const AccountMasterHelp = ({ onAcCodeClick, name, CategoryName, CategoryCode,tab
             window.removeEventListener("keydown", handleKeyDown);
         };
     }, [name, fetchAndOpenPopup]);
+    
 
     useEffect(() => {
         const handleKeyNavigation = (event) => {
@@ -157,7 +158,6 @@ const AccountMasterHelp = ({ onAcCodeClick, name, CategoryName, CategoryCode,tab
                         disabled={disabledFeild}
                     />
                     <Button
-                        tabIndex={tabIndexHelp}
                         variant="primary"
                         onClick={handleButtonClicked}
                         className="ms-1"
