@@ -214,7 +214,7 @@ const Navbar = () => {
               <a ><Link to="/sugarpurchasebill-utility">Purchase Bill</Link></a>
             </div>
             <div className="submenu-item">
-              <a href="/other-gst-input">Other GST Input</a>
+              <a href="/OtherGSTInput-utility">Other GST Input</a>
             </div>
             <div className="submenu-item">
               <a href="/reverse-charge">Reverse Charge</a>
@@ -351,10 +351,10 @@ const Navbar = () => {
         {activeMenu === "outward" && (
           <div className="submenu">
             <div className="submenu-item">
-              <a href="/sale-bill">Sale Bill</a>
+              <a href="/SaleBill-utility">Sale Bill</a>
             </div>
             <div className="submenu-item">
-              <a href="/commission-bill">Commission Bill</a>
+              <a href="/CommissionBill-utility">Commission Bill</a>
             </div>
             <div className="submenu-item">
               <a href="/retail-sale-bill">Retail Sale Bill</a>

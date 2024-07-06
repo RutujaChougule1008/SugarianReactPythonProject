@@ -39,9 +39,9 @@ function DebitCreditNoteUtility() {
             try {
                 const apiUrl = `${API_URL}/getdata-debitcreditNote?Company_Code=${companyCode}&Year_Code=${Year_Code}`;
                 const response = await axios.get(apiUrl);
-                if (response.data && response.data.DebitCredit_Head) {
-                    setFetchedData(response.data.DebitCredit_Head);
-                    setFilteredData(response.data.DebitCredit_Head); 
+                if (response.data && response.data.all_data) {
+                    setFetchedData(response.data.all_data);
+                    setFilteredData(response.data.all_data); 
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -175,10 +175,10 @@ function DebitCreditNoteUtility() {
                                             <TableCell>{post.doc_no}</TableCell>
                                             <TableCell>{post.tran_type}</TableCell>
                                             <TableCell>{post.doc_date}</TableCell>
-                                            <TableCell>{post.Account_Name}</TableCell>
+                                            <TableCell>{post.AccountName}</TableCell>
                                             <TableCell>{post.bill_amount}</TableCell>
                                             <TableCell>{post.dcid}</TableCell>
-                                            <TableCell>{post.Ship_To}</TableCell>
+                                            <TableCell>{post.ShipTo}</TableCell>
                                             <TableCell>{post.bill_id}</TableCell>
                                             <TableCell>{post.ackno}</TableCell>
                                             <TableCell>{post.IsDeleted}</TableCell>

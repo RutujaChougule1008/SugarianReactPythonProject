@@ -25,6 +25,12 @@ import DebitCreditNoteUtility from './Transactions/DebitCreditNote/DebitCreditNo
 import DebitCreditNote from './Transactions/DebitCreditNote/DebitCreditNote';
 import PurchaseBillUtility from './Inword/SugarPurchase/SugarPurchaseBillUtility';
 import SugarPurchase from './Inword/SugarPurchase/SugarPurchase';
+import SaleBillUtility from './Outward/SaleBill/SaleBillUtility';
+import SaleBill from './Outward/SaleBill/SaleBill';
+import CommissionBill from './Outward/CommissionBill/CommissionBill';
+import CommissionBillUtility from './Outward/CommissionBill/CommissionBillUtility';
+import OtherGSTInput from './Inword/OtherGSTInput/OtherGSTInput';
+import OtherGSTInputUtility from './Inword/OtherGSTInput/OtherGSTInputUtility'
 
 const routes = [
   {
@@ -136,6 +142,37 @@ const routes = [
 {
   path: 'sugarpurchasebill',
   element: SugarPurchase 
+},
+
+//SaleBill
+{
+  path: '/sale-bill',
+  element: SaleBill 
+},
+{
+  path: '/SaleBill-utility',
+  element: SaleBillUtility 
+},
+
+//CommissionBill
+{
+  path: '/commission-bill',
+  element: CommissionBill 
+},
+
+{
+  path: '/CommissionBill-utility',
+  element: CommissionBillUtility
+},
+
+//OtherGSTInput
+{
+  path: '/other-gst-input',
+  element: OtherGSTInput 
+},
+{
+  path:'/OtherGSTInput-utility',
+  element: OtherGSTInputUtility
 }
   
   

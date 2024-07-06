@@ -1,0 +1,38 @@
+.commission-form-container {
+    max-width: 2000px;
+    margin: 10px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    justify-content: center;
+    align-items: center;
+}
+
+.commission-form-container label {
+    color: #333333;
+    font-weight: bold;
+    flex-basis: 2%;  /* Sets a consistent basis for all labels */
+    text-align: left;  /* Right alignment for a tidy look */
+    flex-wrap: nowrap;
+    font-size: medium;
+    white-space: nowrap;
+}
+
+.commission-form-container #changeNo, #Tran_Type, #doc_no,#doc_date,#qntl,#packing,#bags, #IsTDS, #link_no{
+    max-width: 150px;
+}
+
+.commission-form-container #HSN, #grade, #mill_rate, #sale_rate, #purc_rate,#TenderDiffRate, #resale_commission, #BANK_COMMISSION, #subtotal, #Frieght_amt,
+#texable_amount,#cgst_amount,#sgst_amount,#igst_amount,#bill_amount,#TCS_Amt,#TCS_Net_Payable,#misc_amount,#TDSAmount,#TDS{
+    max-width: 200px;
+}
+
+.commission-form-container #commission_amount, #resale_rate,#Frieght_Rate,#cgst_rate,#sgst_rate,#igst_rate,#TCS_Rate,#TDS_Per{
+    max-width: 100px;
+}
+
+.commission-form-container #einvoiceno, #ackno{
+    max-width: 300px;
+}
+

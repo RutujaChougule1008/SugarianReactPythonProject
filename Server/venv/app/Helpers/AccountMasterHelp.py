@@ -24,7 +24,7 @@ def account_master_all():
             query = db.session.execute(text('''
                 SELECT dbo.nt_1_accountmaster.Ac_Code, dbo.nt_1_accountmaster.Ac_Name_E, dbo.nt_1_accountmaster.Ac_type,
                        dbo.nt_1_citymaster.city_name_e as cityname, dbo.nt_1_accountmaster.Gst_No, 
-                       dbo.nt_1_accountmaster.accoid 
+                       dbo.nt_1_accountmaster.accoid, dbo.nt_1_accountmaster.Mobile_No
                 FROM dbo.nt_1_accountmaster 
                 LEFT OUTER JOIN dbo.nt_1_citymaster 
                 ON dbo.nt_1_accountmaster.City_Code = dbo.nt_1_citymaster.city_code 
@@ -44,7 +44,8 @@ def account_master_all():
                 'Ac_Name_E': row.Ac_Name_E,
                 'cityname': row.cityname,
                 'Gst_No': row.Gst_No,
-                'accoid': row.accoid
+                'accoid': row.accoid,
+                'Mobile_No': row.Mobile_No
             })
 
         return jsonify(response)

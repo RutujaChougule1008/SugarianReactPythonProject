@@ -15,6 +15,7 @@ const AccountMasterHelp = ({ onAcCodeClick, name, CategoryName, CategoryCode,tab
     const [enteredAcCode, setEnteredAcCode] = useState("");
     const [enteredAcName, setEnteredAcName] = useState("");
     const [enteredAccoid, setEnteredAccoid] = useState("");
+    const [enteredMobNo, setEnteredMobNo] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -62,9 +63,10 @@ const AccountMasterHelp = ({ onAcCodeClick, name, CategoryName, CategoryCode,tab
             setEnteredAcCode(matchingItem.Ac_Code);
             setEnteredAcName(matchingItem.Ac_Name_E);
             setEnteredAccoid(matchingItem.accoid);
+            setEnteredMobNo(matchingItem.Mobile_No)
 
             if (onAcCodeClick) {
-                onAcCodeClick(matchingItem.Ac_Code, matchingItem.accoid, matchingItem.Ac_Name_E);
+                onAcCodeClick(matchingItem.Ac_Code, matchingItem.accoid, matchingItem.Ac_Name_E,matchingItem.Mobile_No, matchingItem.Gst_No);
             }
         } else {
             setEnteredAcName("");
@@ -76,8 +78,9 @@ const AccountMasterHelp = ({ onAcCodeClick, name, CategoryName, CategoryCode,tab
         setEnteredAcCode(item.Ac_Code);
         setEnteredAcName(item.Ac_Name_E);
         setEnteredAccoid(item.accoid);
+        setEnteredMobNo(item.Mobile_No);
         if (onAcCodeClick) {
-            onAcCodeClick(item.Ac_Code, item.accoid, item.Ac_Name_E);
+            onAcCodeClick(item.Ac_Code, item.accoid, item.Ac_Name_E, item.Mobile_No, item.Gst_No);
         }
         setShowModal(false);
     };

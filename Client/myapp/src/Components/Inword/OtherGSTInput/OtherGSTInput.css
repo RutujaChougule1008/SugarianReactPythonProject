@@ -1,0 +1,79 @@
+
+/* Overall container styling */
+.other-form-container {
+    max-width: 800px; /* Adjust width as needed */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff; /* Neutral background */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Soft shadow for depth */
+    border-radius: 8px; /* Rounded corners for modern look */
+    display: flex;
+    margin-top: 20px;
+
+}
+.other-form{
+    padding-left: 50px;
+}
+
+/* Style for the form header */
+.other-form h4 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    position: relative;
+    justify-content: center;
+}
+
+/* Style for each form group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Label styling */
+.form-group label {
+    display: flex;
+    margin-bottom: 5px;
+    color: #666;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+
+}
+
+
+
+/* Disabled input styling */
+input:disabled,
+textarea:disabled {
+    background-color: #eee;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#Doc_No, #Doc_Date{
+    max-width: 140px;
+    margin-left: 11px;
+}
+
+#CGST_Amt, #SGST_Amt, #IGST_Amt{
+    max-width: 200px;
+}
+
+.other-form-container .form-group #Narration {
+    resize: both;
+    width: 80%;
+}
+
+
+
+
+/* Responsive grid */
+@media (max-width: 600px) {
+    .other-form-container {
+        width: 100%;
+        padding: 10px;
+    }
+}

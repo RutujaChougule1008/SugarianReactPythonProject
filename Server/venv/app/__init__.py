@@ -26,6 +26,11 @@ jwt = JWTManager(app)
 # Initialize SocketIO
 socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
+
+# Ensure the upload directory exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 # The rest of your application configuration and routes
 
 # Import controllers and helpers
@@ -46,6 +51,9 @@ from app.Controllers.BusinessRelated.TenderPurchase.TenderPurchaseController imp
 from app.Controllers.Transactions.DebitCreditNote.DebitCreditNoteController import *
 from app.Controllers.Reports.GLedger.GLedgerController import *
 from app.Controllers.Inword.PurchaseBill.PurchaseBillController import *
+from app.Controllers.Outword.SaleBill.SaleBillController import *
+from app.Controllers.Outword.CommissionBill.CommissionBillController import *
+from app.Controllers.Inword.OtherGSTInput.OtherGSTInputController import *
 
 from app.Helpers.AccountMasterHelp import *
 # from app.Helpers.CityMasterHelp import *
@@ -53,7 +61,7 @@ from app.Helpers.AccountMasterHelp import *
 from app.Helpers.GstRateMasterHelp import *
 from app.Helpers.SystemMasterHelp import *
 # from app.Helpers.GstStateMasterHelp import *
-# from app.Helpers.BrandMasterHelp import *
+from app.Helpers.BrandMasterHelp import *
 # from app.Helpers.TenderUtilityHelp import *
 
 #common API Routes
@@ -63,6 +71,12 @@ from app.Common.CommonSugarPurchaseStatusCheck import *
 # other routes
 from app.Controllers.BusinessRelated.CorporateSale.CorporateSaleController import *
 from app.Controllers.Masters.AccountInformation.AccountMaster.AccountMasterController import *
+
+upload_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+
+# Ensure the upload folder exists
+if not os.path.exists(upload_folder):
+    os.makedirs(upload_folder)
 
 
 if __name__ == '__main__':

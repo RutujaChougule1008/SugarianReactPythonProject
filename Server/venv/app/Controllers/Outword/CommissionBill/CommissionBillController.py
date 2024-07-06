@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from app import app, db
-from app.models.Outward.CommissionBill.CommissionBillModel import CommissionBill
+from app.models.Outword.CommissionBill.CommissionBillModel import CommissionBill
 from sqlalchemy.sql import text
 import os
 

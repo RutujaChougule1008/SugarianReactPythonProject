@@ -46,36 +46,46 @@ task_head_schemas = DebitCreditNoteHeadSchema(many=True)
 task_detail_schema = DebitCreditNoteDetailSchema()
 task_detail_schemas = DebitCreditNoteDetailSchema(many=True)
 
-# Get data from both tables DebitcreditNote and DebitcreditNoteDetail
 @app.route(API_URL + "/getdata-debitcreditNote", methods=["GET"])
 def getdata_debitcreditNote():
     try:
-        # Extract company_code and year_code from the request arguments
         company_code = request.args.get('Company_Code')
         year_code = request.args.get('Year_Code')
 
-        # Validate that the parameters are present
         if not company_code or not year_code:
             return jsonify({"error": "Missing 'Company_Code' or 'Year_Code' parameter"}), 400
 
-        # Query both tables with the given conditions
-        task_data = DebitCreditNoteHead.query.filter_by(Company_Code=company_code, Year_Code=year_code).order_by(desc(DebitCreditNoteHead.doc_no)).all()
-        # user_data = DebitCreditNoteDetail.query.filter_by(company_code=company_code, year_code=year_code).all()
+        query = ('''SELECT dbo.debitnotehead.tran_type, dbo.debitnotehead.doc_no, dbo.debitnotehead.doc_date, dbo.debitnotehead.bill_id, dbo.debitnotehead.bill_amount, dbo.debitnotehead.dcid, dbo.debitnotehead.ackno, dbo.debitnotehead.IsDeleted, 
+                  AccountName.Ac_Name_E AS AccountName, ShipTo.Ac_Name_E AS ShipTo
+FROM     dbo.debitnotehead INNER JOIN
+                  dbo.nt_1_accountmaster AS AccountName ON dbo.debitnotehead.Company_Code = AccountName.company_code AND dbo.debitnotehead.ac_code = AccountName.Ac_Code AND dbo.debitnotehead.ac = AccountName.accoid INNER JOIN
+                  dbo.nt_1_accountmaster AS ShipTo ON AccountName.accoid = ShipTo.accoid AND dbo.debitnotehead.Company_Code = ShipTo.company_code AND dbo.debitnotehead.Shit_To = ShipTo.Ac_Code
+                 where dbo.debitnotehead.Company_Code = :company_code and dbo.debitnotehead.Year_Code = :year_code
+                                 '''
+            )
+        additional_data = db.session.execute(text(query), {"company_code": company_code, "year_code": year_code})
 
-        # Serialize the data using schemas
-        task_result = task_head_schemas.dump(task_data)
-        # user_result = task_detail_schemas.dump(user_data)
+        # Extracting category name from additional_data
+        additional_data_rows = additional_data.fetchall()
+        
+        # Convert additional_data_rows to a list of dictionaries
+        all_data = [dict(row._mapping) for row in additional_data_rows]
+
+        for data in all_data:
+            if 'doc_date' in data:
+                data['doc_date'] = data['doc_date'].strftime('%Y-%m-%d') if data['doc_date'] else None
+
+        # Prepare response data 
         response = {
-            "DebitCredit_Head": task_result,
-            # "DebitCredit_Detail": user_result
+            "all_data": all_data
         }
-
+        # If record found, return it
         return jsonify(response), 200
-    except Exception as e:
-        # Handle any potential exceptions and return an error response with a 500 Internal Server Error status code
-        return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
-    
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal server error", "message": str(e)}), 500
+   
 # # We have to get the data By the Particular doc_no AND tran_type
 @app.route(API_URL+"/getdebitcreditByid", methods=["GET"])
 def getdebitcreditByid():

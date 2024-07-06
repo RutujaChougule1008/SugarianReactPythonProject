@@ -22,7 +22,8 @@ class CompanyCreation(db.Model):
     PHONE = db.Column(db.String(255))
     FSSAI_No = db.Column(db.String(255))
     GST = db.Column(db.String(255))
-  
+    Logo = db.Column(db.LargeBinary)  
+    Signature = db.Column(db.LargeBinary)
 
     # isLocked = db.Column(db.Boolean, nullable=False, default=False)
     # LockedbyUser = db.Column(db.String(50),default='')

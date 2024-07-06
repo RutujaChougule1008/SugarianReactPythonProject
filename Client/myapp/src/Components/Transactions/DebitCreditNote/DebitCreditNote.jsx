@@ -46,6 +46,9 @@ var ItemCodeName = "";
 var ItemCodeDetail = "";
 var selectedfilter = "";
 var HSN = "";
+var CGSTRate = 0.0;
+var SGSTRate = 0.0;
+var IGSTRate = 0.0;
 
 const API_URL = process.env.REACT_APP_API;
 const companyCode = sessionStorage.getItem("Company_Code");
@@ -95,6 +98,9 @@ const DebitCreditNote = () => {
   const [tranType, setTranType] = useState(selectedfilter);
   const [isHandleChange, setIsHandleChange] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [cgstRate, setCgstRate] = useState(0.0);
+  const [sgstRate, setSgstRate] = useState(0.0);
+  const [igstRate, setIgstRate] = useState(0.0);
 
   const initialFormData = {
     doc_no: "",
@@ -133,7 +139,7 @@ const DebitCreditNote = () => {
     TCS_Rate: 0.0,
     TCS_Amt: 0.0,
     TCS_Net_Payable: 0.0,
-    TDS_Rate: 0.00,
+    TDS_Rate: 0.0,
     TDS_Amt: 0.0,
     IsDeleted: 1,
   };
@@ -144,22 +150,48 @@ const DebitCreditNote = () => {
   const [billTo, setBillTo] = useState("");
   const [mill, setMill] = useState("");
   const [shipTo, setShipTo] = useState("");
-  const [gstCode, setGstCode] = useState(0.0);
+  const [gstCode, setGstCode] = useState("");
   const [GstRate, setGstRate] = useState(0.0);
+  const [matchStatus, setMatchStatus] = useState(null);
 
   const handleChange = async (event) => {
     const { name, value } = event.target;
-    console.log("handleChange", { name, value });
-    // Call validateField to validate the field value
+
     validateField(name, value);
 
+    const matchStatus = await checkMatchStatus(
+      formData.ac_code,
+      companyCode,
+      Year_Code
+    );
+
+    let gstRate = GstRate;
+
+    if (!gstRate || gstRate === 0) {
+      const cgstRate = parseFloat(formData.cgst_rate) || 0;
+      const sgstRate = parseFloat(formData.sgst_rate) || 0;
+      const igstRate = parseFloat(formData.igst_rate) || 0;
+
+      gstRate = igstRate > 0 ? igstRate : cgstRate + sgstRate;
+    }
+
+    // Calculate dependent values and update form data
     const updatedFormData = await calculateDependentValues(
       name,
       value,
-      formData
+      formData,
+      matchStatus,
+      gstRate
     );
 
     setFormData(updatedFormData);
+  };
+
+  const handleDateChange = (event, fieldName) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [fieldName]: event.target.value,
+    }));
   };
 
   useEffect(() => {
@@ -208,7 +240,6 @@ const DebitCreditNote = () => {
       `${API_URL}/get-lastdebitcreditnotedata?Company_Code=${companyCode}&Year_Code=${Year_Code}&tran_type=${tranType}`
     )
       .then((response) => {
-        console.log("response", response);
         if (!response.ok) {
           throw new Error("Failed to fetch last record");
         }
@@ -230,7 +261,7 @@ const DebitCreditNote = () => {
         );
       })
       .catch((error) => {
-        console.error("Error fetching last record:", error);
+        toast.error("Error fetching last record:", error);
       });
   };
 
@@ -258,7 +289,6 @@ const DebitCreditNote = () => {
     ShipToName = "";
     ShipToCode = "";
     setLastTenderDetails([]);
-    
   };
 
   // Handle Edit button Functionality
@@ -278,8 +308,10 @@ const DebitCreditNote = () => {
     if (!validateForm()) return;
     setIsEditing(true);
     setIsLoading(true);
+
     const headData = {
       ...formData,
+      gst_code: gstCode || GSTCode,
       tran_type: tranType,
     };
 
@@ -336,7 +368,6 @@ const DebitCreditNote = () => {
         }, 1000);
       }
     } catch (error) {
-      console.error("Error during API call:", error);
       toast.error("Error occurred while saving data");
     } finally {
       setIsEditing(false);
@@ -367,22 +398,22 @@ const DebitCreditNote = () => {
             toast.success("Data delete successfully!");
             handleCancel();
           } else if (response.status === 404) {
-            console.error("No data found");
+            toast.error("No data found");
           }
         } else {
-          console.error(
+          toast.error(
             "Failed to delete tender:",
             response.status,
             response.statusText
           );
         }
       } catch (error) {
-        console.error("Error during API call:", error);
+        toast.error("Error during API call:", error);
       } finally {
         setIsLoading(false);
       }
     } else {
-      console.log("Deletion cancelled");
+      toast.log("Deletion cancelled");
     }
   };
 
@@ -420,23 +451,29 @@ const DebitCreditNote = () => {
         ItemCodeDetail = data.last_details_data[0].Item_Code;
         HSN = data.last_details_data[0].HSN;
 
+        // setCgstRate(parseFloat(data.last_head_data.cgst_rate));
+        // setSgstRate(parseFloat(data.last_head_data.sgst_rate));
+        // setIgstRate(parseFloat(data.last_head_data.igst_rate));
+
         setFormData((prevData) => ({
           ...prevData,
           ...data.last_head_data,
+          // cgst_rate: parseFloat(data.last_head_data.cgst_rate),
+          // sgst_rate: parseFloat(data.last_head_data.sgst_rate),
+          // igst_rate: parseFloat(data.last_head_data.igst_rate),
         }));
 
-        console.log(GstRate)
         setLastTenderData(data.last_head_data || {});
         setLastTenderDetails(data.last_details_data || []);
       } else {
-        console.error(
+        toast.error(
           "Failed to fetch last data:",
           response.status,
           response.statusText
         );
       }
     } catch (error) {
-      console.error("Error during API call:", error);
+      toast.error("Error during API call:", error);
     }
   };
 
@@ -747,7 +784,6 @@ const DebitCreditNote = () => {
       Quantal: detail.Quantal,
     }));
 
-    console.log("Updated Users for Grid:", updatedUsers);
     setUsers(updatedUsers);
   }, [lastTenderDetails]);
 
@@ -791,9 +827,9 @@ const DebitCreditNote = () => {
   const editUser = (user) => {
     setSelectedUser(user);
     setExpacCode(user.expac_code);
-    console.log(user.expac_code);
+
     setExpacName(user.expacName);
-    console.log(user.expacName);
+
     setItemCode(user.Item_Code);
     setItemName(user.itemName);
     setFormDataDetail({
@@ -819,8 +855,6 @@ const DebitCreditNote = () => {
       rowaction: "add",
     };
 
-    console.log(hsnNo);
-
     const updatedUsers = [...users, newUser];
     setUsers(updatedUsers);
 
@@ -832,11 +866,24 @@ const DebitCreditNote = () => {
       companyCode,
       Year_Code
     );
+
+    // Calculate GST rate from existing rates if GstRate is not set
+    let gstRate = GstRate;
+    if (!gstRate || gstRate === 0) {
+      const cgstRate = parseFloat(formData.cgst_rate) || 0;
+      const sgstRate = parseFloat(formData.sgst_rate) || 0;
+      const igstRate = parseFloat(formData.igst_rate) || 0;
+
+      // Assume that if IGST is present, it should be used; otherwise, use CGST + SGST
+      gstRate = igstRate > 0 ? igstRate : cgstRate + sgstRate;
+    }
+
     updatedFormData = await calculateDependentValues(
-      "texable_amount",
-      totalTaxableAmount,
+      "gst_code",
+      gstRate,
       updatedFormData,
-      matchStatus
+      matchStatus,
+      gstRate
     );
 
     setFormData(updatedFormData);
@@ -876,16 +923,28 @@ const DebitCreditNote = () => {
       companyCode,
       Year_Code
     );
+
+    let gstRate = GstRate;
+    if (!gstRate || gstRate === 0) {
+      const cgstRate = parseFloat(formData.cgst_rate) || 0;
+      const sgstRate = parseFloat(formData.sgst_rate) || 0;
+      const igstRate = parseFloat(formData.igst_rate) || 0;
+
+      gstRate = igstRate > 0 ? igstRate : cgstRate + sgstRate;
+    }
+
     updatedFormData = await calculateDependentValues(
-      "texable_amount",
-      totalTaxableAmount,
+      "gst_code", // Pass the name of the field being changed
+      gstRate, // Pass the correct gstRate
       updatedFormData,
-      matchStatus
+      matchStatus,
+      gstRate // Pass gstRate explicitly to calculateDependentValues
     );
 
     setFormData(updatedFormData);
     closePopup();
   };
+
   // Delete User On Grid
   const deleteModeHandler = async (user) => {
     setDeleteMode(true);
@@ -917,11 +976,23 @@ const DebitCreditNote = () => {
       companyCode,
       Year_Code
     );
+
+    let gstRate = GstRate;
+    if (!gstRate || gstRate === 0) {
+      const cgstRate = parseFloat(formData.cgst_rate) || 0;
+      const sgstRate = parseFloat(formData.sgst_rate) || 0;
+      const igstRate = parseFloat(formData.igst_rate) || 0;
+
+      // Assume that if IGST is present, it should be used; otherwise, use CGST + SGST
+      gstRate = igstRate > 0 ? igstRate : cgstRate + sgstRate;
+    }
+
     updatedFormData = await calculateDependentValues(
-      "texable_amount",
-      totalTaxableAmount,
+      "gst_code", // Pass the name of the field being changed
+      gstRate, // Pass the correct gstRate
       updatedFormData,
-      matchStatus
+      matchStatus,
+      gstRate // Pass gstRate explicitly to calculateDependentValues
     );
 
     setFormData(updatedFormData);
@@ -954,18 +1025,30 @@ const DebitCreditNote = () => {
       companyCode,
       Year_Code
     );
+
+    let gstRate = GstRate;
+    if (!gstRate || gstRate === 0) {
+      const cgstRate = parseFloat(formData.cgst_rate) || 0;
+      const sgstRate = parseFloat(formData.sgst_rate) || 0;
+      const igstRate = parseFloat(formData.igst_rate) || 0;
+
+      // Assume that if IGST is present, it should be used; otherwise, use CGST + SGST
+      gstRate = igstRate > 0 ? igstRate : cgstRate + sgstRate;
+    }
+
     updatedFormData = await calculateDependentValues(
-      "texable_amount",
-      totalTaxableAmount,
+      "gst_code", // Pass the name of the field being changed
+      gstRate, // Pass the correct gstRate
       updatedFormData,
-      matchStatus
+      matchStatus,
+      gstRate // Pass gstRate explicitly to calculateDependentValues
     );
 
     setFormData(updatedFormData);
   };
 
   // Functionality to help section to set the record
-  const handleItemCode = (code, accoid, HSN, name) => {
+  const handleItemCode = (code, accoid,  name, HSN) => {
     setItemCode(code);
     setItemCodeAccoid(accoid);
     setHSNNo(HSN);
@@ -977,7 +1060,6 @@ const DebitCreditNote = () => {
     setExpacCode(code);
     setExpacAccoid(accoid);
     setExpacName(name);
-    console.log(name);
 
     // Update expacAccoid for all users with the same expac_code
     const updatedUsers = users.map((user) => {
@@ -1008,7 +1090,7 @@ const DebitCreditNote = () => {
       return data.match_status;
     } catch (error) {
       toast.error("Error checking GST State Code match.");
-      console.error("Couldn't able to match GST State Code:", error);
+
       return error;
     }
   };
@@ -1051,33 +1133,50 @@ const DebitCreditNote = () => {
     };
 
     try {
-      const matchStatus = await checkMatchStatus(code, companyCode, Year_Code);
-      console.log("Match status:", matchStatus);
+      const matchStatusResult = await checkMatchStatus(
+        code,
+        companyCode,
+        Year_Code
+      );
+      setMatchStatus(matchStatusResult);
 
-      if (matchStatus === "TRUE") {
+      if (matchStatusResult === "TRUE") {
         toast.success("GST State Codes match!");
       } else {
         toast.warn("GST State Codes do not match.");
       }
+
+      let gstRate = GstRate;
+
+    if (!gstRate || gstRate === 0) {
+      const cgstRate = parseFloat(formData.cgst_rate) || 0;
+      const sgstRate = parseFloat(formData.sgst_rate) || 0;
+      const igstRate = parseFloat(formData.igst_rate) || 0;
+
+      gstRate = igstRate > 0 ? igstRate : cgstRate + sgstRate;
+    }
 
       // Perform the calculation after setting BillFrom
       updatedFormData = await calculateDependentValues(
         "gst_code",
         GstRate,
         updatedFormData,
-        matchStatus
+        matchStatusResult,
+        gstRate // Explicitly pass the GstRate state variable
       );
       setFormData(updatedFormData);
     } catch (error) {
       console.error("Error in handleBillFrom:", error);
     }
   };
-
-  const handleGstCode = async (code,Rate) => {
+  const handleGstCode = async (code, Rate) => {
     setGstCode(code);
     let rate = parseFloat(Rate);
+    setFormData({
+      ...formData,
+      gst_code: code,
+    });
     setGstRate(rate);
-    console.log("Rate:", typeof rate);
 
     const updatedFormData = {
       ...formData,
@@ -1085,26 +1184,26 @@ const DebitCreditNote = () => {
     };
 
     try {
-      // Check the match status
-      const matchStatus = await checkMatchStatus(
+      const matchStatusResult = await checkMatchStatus(
         updatedFormData.ac_code,
         companyCode,
         Year_Code
       );
+      setMatchStatus(matchStatusResult);
 
       // Calculate the dependent values based on the match status
       const newFormData = await calculateDependentValues(
         "gst_code",
         rate,
         updatedFormData,
-        matchStatus
+        matchStatusResult, // Use the matchStatusResult
+        rate // Explicitly pass the gstRate
       );
 
       setFormData(newFormData);
-    } catch (error) {
-      console.error("Error in handleGstCode:", error);
-    }
+    } catch (error) {}
   };
+
   const calculateTotalTaxableAmount = (users) => {
     return users
       .filter((user) => user.rowaction !== "delete" && user.rowaction !== "DNU")
@@ -1113,22 +1212,19 @@ const DebitCreditNote = () => {
 
   const calculateDependentValues = async (
     name,
-    value,
+    input,
     formData,
-    matchStatus
+    matchStatus,
+    gstRate
   ) => {
-    const updatedFormData = { ...formData, [name]: value };
-
+    const updatedFormData = { ...formData, [name]: input };
     const taxableAmount = parseFloat(updatedFormData.texable_amount) || 0.0;
-    const rate = parseFloat(GstRate) || parseFloat(value) || 0.0;
-
-    console.log("Rate", typeof rate); 
+    const rate = gstRate;
 
     if (matchStatus === "TRUE") {
-      // Calculate CGST and SGST as half of the GST rate
       updatedFormData.cgst_rate = (rate / 2).toFixed(2);
       updatedFormData.sgst_rate = (rate / 2).toFixed(2);
-      updatedFormData.igst_rate = (0.0).toFixed(2);
+      updatedFormData.igst_rate = 0.0;
 
       updatedFormData.cgst_amount = (
         (taxableAmount * updatedFormData.cgst_rate) /
@@ -1138,19 +1234,18 @@ const DebitCreditNote = () => {
         (taxableAmount * updatedFormData.sgst_rate) /
         100
       ).toFixed(2);
-      updatedFormData.igst_amount = (0.0).toFixed(2);
+      updatedFormData.igst_amount = 0.0;
     } else {
-      // Calculate IGST as the full GST rate
       updatedFormData.igst_rate = rate.toFixed(2);
-      updatedFormData.cgst_rate = (0.0).toFixed(2);
-      updatedFormData.sgst_rate = (0.0).toFixed(2);
+      updatedFormData.cgst_rate = 0.0;
+      updatedFormData.sgst_rate = 0.0;
 
       updatedFormData.igst_amount = (
         (taxableAmount * updatedFormData.igst_rate) /
         100
       ).toFixed(2);
-      updatedFormData.cgst_amount = (0.0).toFixed(2);
-      updatedFormData.sgst_amount = (0.0).toFixed(2);
+      updatedFormData.cgst_amount = 0.0;
+      updatedFormData.sgst_amount = 0.0;
     }
 
     const miscAmount = parseFloat(updatedFormData.misc_amount) || 0.0;
@@ -1174,7 +1269,7 @@ const DebitCreditNote = () => {
 
     const tdsRate = parseFloat(updatedFormData.TDS_Rate) || 0.0;
     updatedFormData.TDS_Amt = (
-      (updatedFormData.bill_amount * tdsRate) /
+      (updatedFormData.texable_amount * tdsRate) /
       100
     ).toFixed(2);
 
@@ -1278,7 +1373,7 @@ const DebitCreditNote = () => {
                 id="datePicker"
                 name="doc_date"
                 value={formData.doc_date}
-                onChange={handleChange}
+                onChange={(e) => handleDateChange(e, "doc_date")}
                 disabled={!isEditing && addOneButtonEnabled}
               />
             </div>
@@ -1325,7 +1420,7 @@ const DebitCreditNote = () => {
                 id="datePicker"
                 name="bill_date"
                 value={formData.bill_date}
-                onChange={handleChange}
+                onChange={(e) => handleDateChange(e, "bill_date")}
                 disabled={!isEditing && addOneButtonEnabled}
               />
             </div>
